@@ -1,9 +1,14 @@
 import { Page } from "@/types";
 
-export async function updateOnePage(page: Page, _id?: string, index?: number) {
-  const route = _id
-    ? `/api/folder/${_id}/${index}/updateOnePage`
-    : "/api/page/updateOne";
+export async function updateOnePage(
+  page: Page,
+  folder_id?: string,
+  page_id?: number
+) {
+  const route =
+    folder_id && page_id
+      ? `/api/folder/${folder_id}/${page_id}/update-page`
+      : "/api/page/delete-page";
   const response = await fetch(route, {
     body: JSON.stringify(page),
     headers: {

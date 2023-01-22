@@ -3,22 +3,22 @@ import { folder } from "@/models";
 import mongooseConnect from "@/lib/mongoose-connect";
 
 const handler: NextApiHandler = async (req, res: NextApiResponse) => {
-  if (req.method === "DELETE") {
-    const { _id } = req.query;
+  if (req.method === "PUT") {
+    const { folder_id, page_id } = req.query;
     const { title, tags, content } = req.body;
     const timestamp = Date.now();
     const parent_doc = new folder();
     const newPage = parent_doc.pages.create({
       title: title,
-      tags: tags,
-      content: content,
+      tags: tags ? tags : [],
+      content: content ? content : [],
       iat: timestamp,
       eat: timestamp,
     });
     await mongooseConnect();
     const response = await folder.findOneAndUpdate(
-      { _id: _id },
-      { $pop: { pages: newPage } },
+      { _id: folder_id },
+      { $set: { pages: { _id: page_id }, newPage } },
       { returnDocument: "after", upsert: true, returnOriginal: false }
     );
     res.status(200).json(response);

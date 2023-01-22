@@ -25,7 +25,7 @@ export default function New() {
       name: e.target.name.value,
     };
     createMutation.mutate({ ...newFolder });
-    setTimeout(() => setTitle(""), 50);
+    setTitle("");
   };
 
   return (

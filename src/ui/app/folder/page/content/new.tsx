@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { Label } from "@radix-ui/react-label";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
@@ -7,7 +8,13 @@ import type { Content } from "@/types";
 
 // todo :: replace select with radix-ui select
 
-export default function NewPageContent({ folder_id, index }: { folder_id: string, index: number }) {
+export default function NewPageContent({
+  folder_id,
+  page_id,
+}: {
+  folder_id: string;
+  page_id: string;
+}) {
   const [text, setText] = React.useState<string>(null);
   const [elem, setElem] = React.useState<string>(null);
 
@@ -19,11 +26,13 @@ export default function NewPageContent({ folder_id, index }: { folder_id: string
 
   const queryClient = useQueryClient();
   const createMutation = useMutation(
-    (newContent: Content) => createPageContent(newContent, folder_id, index),
+    (newContent: Content) => {
+      createPageContent(newContent, folder_id, page_id);
+    },
     {
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: ["content", "page", "folder"],
+          queryKey: ["folder"],
         });
       },
     }
@@ -37,12 +46,13 @@ export default function NewPageContent({ folder_id, index }: { folder_id: string
       text: e.target.text.value,
     };
     createMutation.mutate({ ...newContent });
-    setTimeout(() => setText(""), 50);
+    setText("");
   };
 
   return (
     <>
       <form pt-1 onSubmit={onSubmit}>
+        <Label htmlFor="elem" />
         <select
           name="elem"
           border-0

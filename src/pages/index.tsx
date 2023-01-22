@@ -15,7 +15,7 @@ const DynamicNewFolder = dynamic(() => import("@/ui/app/folder/new"), {
 
 export default function Index() {
   const { data, isLoading, isFetching } = useQuery<[Folder]>(["folder"], () =>
-    fetcher("/api/folder/findAllAndPopulate", "GET")
+    fetcher("/api/folder/find-populate-folders", "GET")
   );
   return (
     <>

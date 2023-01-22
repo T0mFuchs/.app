@@ -1,7 +1,7 @@
 import { Folder } from "@/types";
 
 export async function createOneFolder(folder: Folder) {
-  const response = await fetch("/api/folder/createOne", {
+  const response = await fetch("/api/folder/create-folder", {
     body: JSON.stringify(folder),
     headers: {
       "Content-Type": "application/json",

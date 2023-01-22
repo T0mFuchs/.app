@@ -56,6 +56,7 @@ export default function Index({
     };
     if (updatedFolder.name === "") {
       deleteMutation.mutate({ ...currentFolder });
+      return;
     }
     if (currentFolder?.name !== folder.name) {
       updateMutation.mutate({ ...updatedFolder });
@@ -96,7 +97,16 @@ export default function Index({
                     }
                   />
                 </form>
-                <span i-mdi-chevron-down className="i" relative top-1 left-1 transform-gpu transition-transform duration-300 />
+                <span
+                  i-mdi-chevron-down
+                  className="i"
+                  relative
+                  top-1
+                  left-1
+                  transform-gpu
+                  transition-transform
+                  duration-300
+                />
               </div>
             </AccordionTrigger>
           </AccordionHeader>

@@ -1,9 +1,9 @@
 import { Page } from "@/types";
 
-export async function createOnePage(page: Page, _id?: string) {
-  const route = _id
-    ? `/api/folder/${_id}/createOnePage`
-    : "/api/page/createOne";
+export async function createOnePage(page: Page, folder_id?: string) {
+  const route = folder_id
+    ? `/api/folder/${folder_id}/create-page`
+    : "/api/page/create-page";
   const response = await fetch(route, {
     body: JSON.stringify(page),
     headers: {

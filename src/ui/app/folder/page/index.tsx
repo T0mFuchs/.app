@@ -22,11 +22,9 @@ import NewPageContent from "./content/new";
 
 export default function Page({
   page,
-  index,
   folder_id,
 }: {
   page: Page;
-  index: number;
   folder_id?: string;
 }) {
   const [currentPage, setCurrentPage] = React.useState<Page>(null);
@@ -34,19 +32,23 @@ export default function Page({
   const queryClient = useQueryClient();
 
   const updateMutation = useMutation(
-    (updatedPage: Page) => updateOnePage(updatedPage, folder_id),
+    (updatedPage: Page) =>
+      updateOnePage(updatedPage, folder_id, currentPage._id),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["page", "folder"] });
+        queryClient.invalidateQueries({ queryKey: ["folder"] });
       },
     }
   );
 
-  const deleteMutation = useMutation((page: Page) => deleteOnePage(page), {
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["page", "folder"] });
-    },
-  });
+  const deleteMutation = useMutation(
+    (page: Page) => deleteOnePage(page, folder_id, currentPage._id),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["folder"] });
+      },
+    }
+  );
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -56,9 +58,11 @@ export default function Page({
     };
     if (updatedPage.title === "") {
       deleteMutation.mutate({ ...currentPage });
+      return;
     }
     if (currentPage?.title !== page.title) {
       updateMutation.mutate({ ...updatedPage });
+      return;
     }
   };
 
@@ -96,7 +100,16 @@ export default function Page({
                     }
                   />
                 </form>
-                <span i-mdi-chevron-down className="i" relative top-1 left-1 transform-gpu transition-transform duration-300 />
+                <span
+                  i-mdi-chevron-down
+                  className="i"
+                  relative
+                  top-1
+                  left-1
+                  transform-gpu
+                  transition-transform
+                  duration-300
+                />
               </div>
             </AccordionTrigger>
           </AccordionHeader>
@@ -107,7 +120,10 @@ export default function Page({
             </AccordionContent>
           ))}
           <AccordionContent className="ac" relative left-3>
-            <NewPageContent folder_id={folder_id} index={index} />
+            <NewPageContent
+              folder_id={folder_id as string}
+              page_id={page._id as string}
+            />
           </AccordionContent>
         </AccordionItem>
       </Accordion>

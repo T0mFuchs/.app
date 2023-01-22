@@ -13,7 +13,7 @@ export default function NewPage({ folder_id }: { folder_id: string }) {
     (newPage: Page) => createOnePage(newPage, folder_id),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["page", "folder"] });
+        queryClient.invalidateQueries({ queryKey: ["folder"] });
       },
     }
   );
