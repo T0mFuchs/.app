@@ -23,9 +23,11 @@ import NewPageContent from "./content/new";
 export default function Page({
   page,
   folder_id,
+  key,
 }: {
   page: Page;
   folder_id?: string;
+  key?: React.Key;
 }) {
   const [currentPage, setCurrentPage] = React.useState<Page>(null);
 
@@ -55,6 +57,8 @@ export default function Page({
     const updatedPage: Page = {
       _id: currentPage?._id,
       title: e.target.title.value,
+      tags: currentPage?.tags,
+      content: currentPage?.content,
     };
     if (updatedPage.title === "") {
       deleteMutation.mutate({ ...currentPage });
@@ -114,9 +118,13 @@ export default function Page({
             </AccordionTrigger>
           </AccordionHeader>
           <div aria-hidden p-1 />
-          {page.content?.map((row, index) => (
+          {page.content?.map((content, index) => (
             <AccordionContent className="ac" key={index} relative left-3>
-              <Content elem={row.elem} text={row.text} />
+              <Content
+                content={content}
+                folder_id={folder_id as string}
+                page_id={page._id as string}
+              />
             </AccordionContent>
           ))}
           <AccordionContent className="ac" relative left-3>

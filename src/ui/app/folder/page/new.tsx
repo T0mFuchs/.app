@@ -6,7 +6,7 @@ import { createOnePage } from "@/hooks/fetch/page/createOnePage";
 import type { Page } from "@/types";
 
 export default function NewPage({ folder_id }: { folder_id: string }) {
-  const [title, setTitle] = React.useState<string>(null);
+  const [page, setPage] = React.useState<Page>(null);
 
   const queryClient = useQueryClient();
   const createMutation = useMutation(
@@ -25,7 +25,7 @@ export default function NewPage({ folder_id }: { folder_id: string }) {
       title: e.target.title.value,
     };
     createMutation.mutate({ ...newPage });
-    setTimeout(() => setTitle(""), 50);
+    setPage(null);
   };
 
   return (
@@ -43,9 +43,8 @@ export default function NewPage({ folder_id }: { folder_id: string }) {
           bg-transparent
           hover:bg-neutral-800
           name="title"
-          value={title ? title : undefined}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder=""
+          value={page?.title ?? ""}
+          onChange={(e) => setPage({ title: e.target.value })}
         />
       </form>
     </div>

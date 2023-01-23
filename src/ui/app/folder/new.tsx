@@ -7,7 +7,7 @@ import { createOneFolder } from "@/hooks/fetch/folder/createOneFolder";
 import type { Folder } from "@/types";
 
 export default function New() {
-  const [title, setTitle] = React.useState<string>(null);
+  const [folder, setFolder] = React.useState<Folder>(null);
 
   const queryClient = useQueryClient();
   const createMutation = useMutation(
@@ -25,7 +25,7 @@ export default function New() {
       name: e.target.name.value,
     };
     createMutation.mutate({ ...newFolder });
-    setTitle("");
+    setFolder(null);
   };
 
   return (
@@ -43,8 +43,8 @@ export default function New() {
           bg-transparent
           hover:bg-neutral-800
           name="name"
-          value={title ? title : undefined}
-          onChange={(e) => setTitle(e.target.value)}
+          value={folder?.name ?? ""}
+          onChange={(e) => setFolder({ name: e.target.value })}
           placeholder=""
         />
       </form>

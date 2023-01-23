@@ -19,7 +19,7 @@ const handler: NextApiHandler = async (req, res: NextApiResponse) => {
     const response = await folder.findOneAndUpdate(
       { _id: folder_id },
       { $push: { pages: newPage } },
-      { returnDocument: "after", upsert: true, returnOriginal: false }
+      { returnDocument: "after", upsert: true }
     );
     res.status(200).json(response);
   }

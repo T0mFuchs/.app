@@ -53,6 +53,7 @@ export default function Index({
     const updatedFolder: Folder = {
       _id: currentFolder?._id,
       name: e.target.name.value,
+      pages: currentFolder?.pages,
     };
     if (updatedFolder.name === "") {
       deleteMutation.mutate({ ...currentFolder });
@@ -60,6 +61,7 @@ export default function Index({
     }
     if (currentFolder?.name !== folder.name) {
       updateMutation.mutate({ ...updatedFolder });
+      return;
     }
   };
 

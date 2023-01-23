@@ -6,7 +6,16 @@ import { createPageContent } from "@/hooks/fetch/page/content/createPageContent"
 
 import type { Content } from "@/types";
 
-// todo :: replace select with radix-ui select
+const handleElem = (elem: string) => {
+  if (elem === "h1") return "m-2 font-900 text-size-5 leading-7";
+  if (elem === "h2") return "m-2 font-700 leading-6";
+  if (elem === "h3") return "m-1 font-700 leading-5";
+  if (elem === "p") return "p-2 leading-4";
+  // setup some logic for this
+  if (elem === "ul") return "ul leading-4";
+  if (elem === "ol") return "ol leading-4";
+  if (elem === "li") return "li leading-4";
+};
 
 export default function NewPageContent({
   folder_id,
@@ -15,14 +24,7 @@ export default function NewPageContent({
   folder_id: string;
   page_id: string;
 }) {
-  const [text, setText] = React.useState<string>(null);
-  const [elem, setElem] = React.useState<string>(null);
-
-  //* |define some lofic| useReducer to only allow li after ul or ol
-
-  const [styles, setStyles] = React.useState<string>(null);
-  // set string of styles depending on key listener toggle between bold italic underline
-  // todo: useReducer to toggle between bold italic underline
+  const [content, setContent] = React.useState<Content>(null);
 
   const queryClient = useQueryClient();
   const createMutation = useMutation(
@@ -46,12 +48,12 @@ export default function NewPageContent({
       text: e.target.text.value,
     };
     createMutation.mutate({ ...newContent });
-    setText("");
+    setContent(null);
   };
 
   return (
     <>
-      <form pt-1 onSubmit={onSubmit}>
+      <form pt-1 onSubmit={onSubmit} inline-flex>
         <Label htmlFor="elem" />
         <select
           name="elem"
@@ -65,7 +67,11 @@ export default function NewPageContent({
           text-center
           relative
           right-2
+          onChange={(e) => setContent({ ...content, elem: e.target.value })}
         >
+          <option w-12 value="p">
+            p
+          </option>
           <option value="h1" bg-transparent>
             h1
           </option>
@@ -75,9 +81,7 @@ export default function NewPageContent({
           <option w-12 value="h3">
             h3
           </option>
-          <option w-12 value="p">
-            p
-          </option>
+
           <option w-12 value="ul">
             ul
           </option>
@@ -91,6 +95,7 @@ export default function NewPageContent({
         <Label htmlFor="text" />
         <input
           type="text"
+          m-0
           p-1
           border-0
           rounded
@@ -99,10 +104,10 @@ export default function NewPageContent({
           bg-transparent
           hover:bg-neutral-800
           focus:bg-neutral-800
+          value={content?.text ?? ""}
+          className={content?.elem ? handleElem(content.elem) : ""}
+          onChange={(e) => setContent({ ...content, text: e.target.value })}
           name="text"
-          value={text ? text : undefined}
-          onChange={(e) => setText(e.target.value)}
-          placeholder=""
         />
       </form>
     </>
