@@ -76,46 +76,54 @@ export default function Page({
       <Accordion type="multiple" key={page._id}>
         <AccordionItem value={`item-page-${page._id}`}>
           <AccordionHeader>
-            <AccordionTrigger className="at" asChild>
-              <div inline-flex>
-                <span i-mdi-file relative top-1 right-1 />
-                <form onSubmit={onSubmit}>
-                  <Label htmlFor="title" />
-                  <input
-                    type="text"
-                    name="title"
-                    p-1
-                    border-0
-                    rounded
-                    leading-4
-                    text-base
-                    bg-transparent
-                    hover:bg-neutral-800
-                    onFocus={() => setCurrentPage(page)}
-                    onChange={(e) =>
-                      setCurrentPage({
-                        ...currentPage,
-                        title: e.target.value,
-                      })
-                    }
-                    value={
-                      currentPage && currentPage._id === page?._id
-                        ? currentPage?.title
-                        : page?.title
-                    }
-                  />
-                </form>
-                <span
-                  i-mdi-chevron-down
-                  className="i"
-                  relative
-                  top-1
-                  left-1
-                  transform-gpu
-                  transition-transform
-                  duration-300
+            <AccordionTrigger
+              border-0
+              bg-transparent
+              hover:animate-pulse
+              focus:animate-pulse
+              outline-none
+              inline-flex
+              className="at"
+            >
+              <span i-mdi-file relative top-1 right-1 />
+              <form onSubmit={onSubmit}>
+                <Label htmlFor="title" />
+                <input
+                  type="text"
+                  name="title"
+                  p-1
+                  border-0
+                  rounded
+                  leading-4
+                  text-base
+                  bg-transparent
+                  hover:bg-neutral-800
+                  focus:bg-neutral-800
+                  outline-none
+                  onFocus={() => setCurrentPage(page)}
+                  onChange={(e) =>
+                    setCurrentPage({
+                      ...currentPage,
+                      title: e.target.value,
+                    })
+                  }
+                  value={
+                    currentPage && currentPage._id === page?._id
+                      ? currentPage?.title
+                      : page?.title
+                  }
                 />
-              </div>
+              </form>
+              <span
+                i-mdi-chevron-down
+                className="i"
+                relative
+                top="1.5"
+                left-1
+                transform-gpu
+                transition-transform
+                duration-300
+              />
             </AccordionTrigger>
           </AccordionHeader>
           <div aria-hidden p-1 />

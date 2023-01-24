@@ -42,6 +42,8 @@ export default function NewPage({ folder_id }: { folder_id: string }) {
           text-base
           bg-transparent
           hover:bg-neutral-800
+          focus:bg-neutral-800
+          outline-none
           name="title"
           value={page?.title ?? ""}
           onChange={(e) => setPage({ title: e.target.value })}

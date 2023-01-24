@@ -42,6 +42,8 @@ export default function New() {
           text-base
           bg-transparent
           hover:bg-neutral-800
+          focus:bg-neutral-800
+          outline-none
           name="name"
           value={folder?.name ?? ""}
           onChange={(e) => setFolder({ name: e.target.value })}

@@ -78,12 +78,17 @@ export default function Content({
       <Label htmlFor="elem" />
       <select
         name="elem"
-        border-0
+        defaultValue={content.elem}
+        border-1
+        border-transparent
         rounded
         leading-4
         text-base
-        hover:bg-neutral-800
-        focus:bg-neutral-800
+        hover:border-neutral-400
+        focus:border-neutral-400
+        hover:animate-pulse
+        focus:animate-pulse
+        outline-none
         w-12
         text-center
         relative
@@ -92,17 +97,15 @@ export default function Content({
           setCurrentContent({ ...currentContent, elem: e.target.value })
         }
       >
-        <option value="h1" bg-transparent>
-          h1
+        <option w-12 value="p">
+          p
         </option>
+        <option value="h1">h1</option>
         <option w-12 value="h2">
           h2
         </option>
         <option w-12 value="h3">
           h3
-        </option>
-        <option w-12 value="p">
-          p
         </option>
         <option w-12 value="ul">
           ul
@@ -125,6 +128,7 @@ export default function Content({
         bg-transparent
         hover:bg-neutral-800
         focus:bg-neutral-800
+        outline-none
         key={key}
         value={currentContent?.text}
         className={handleElem(currentContent.elem)}

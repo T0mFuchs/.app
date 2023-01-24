@@ -57,12 +57,16 @@ export default function NewPageContent({
         <Label htmlFor="elem" />
         <select
           name="elem"
-          border-0
+          border-1
+          border-transparent
           rounded
           leading-4
           text-base
-          hover:bg-neutral-800
-          focus:bg-neutral-800
+          hover:border-neutral-400
+          focus:border-neutral-400
+          hover:animate-pulse
+          focus:animate-pulse
+          outline-none
           w-12
           text-center
           relative
@@ -72,9 +76,7 @@ export default function NewPageContent({
           <option w-12 value="p">
             p
           </option>
-          <option value="h1" bg-transparent>
-            h1
-          </option>
+          <option value="h1">h1</option>
           <option w-12 value="h2">
             h2
           </option>
@@ -104,6 +106,7 @@ export default function NewPageContent({
           bg-transparent
           hover:bg-neutral-800
           focus:bg-neutral-800
+          outline-none
           value={content?.text ?? ""}
           className={content?.elem ? handleElem(content.elem) : ""}
           onChange={(e) => setContent({ ...content, text: e.target.value })}
