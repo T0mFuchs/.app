@@ -1,6 +1,6 @@
 const isDev = process.env.NODE_ENV === "development";
 
-const unoCSS = require('@unocss/webpack').default
+const unoCSS = require('@unocss/webpack').default;
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -16,7 +16,7 @@ const nextConfig = {
     config.experiments = {
       ...config.experiments,
       topLevelAwait: true,
-    }
+    };
     if (!isDev && !isServer) {
       config.resolve.alias = {
         ...config.resolve.alias,

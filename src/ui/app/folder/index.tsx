@@ -54,6 +54,7 @@ export default function Index({
       _id: currentFolder?._id,
       name: e.target.name.value,
       pages: currentFolder?.pages,
+      iat: currentFolder?.iat,
     };
     if (updatedFolder.name === "") {
       deleteMutation.mutate({ ...currentFolder });

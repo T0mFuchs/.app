@@ -59,6 +59,7 @@ export default function Page({
       title: e.target.title.value,
       tags: currentPage?.tags,
       content: currentPage?.content,
+      iat: currentPage?.iat,
     };
     if (updatedPage.title === "") {
       deleteMutation.mutate({ ...currentPage });

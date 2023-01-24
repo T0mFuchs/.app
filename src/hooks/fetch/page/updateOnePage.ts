@@ -3,7 +3,7 @@ import { Page } from "@/types";
 export async function updateOnePage(
   page: Page,
   folder_id?: string,
-  page_id?: number
+  page_id?: string
 ) {
   const route =
     folder_id && page_id

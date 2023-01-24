@@ -37,7 +37,7 @@ export default function Content({
 
   const updateMutation = useMutation(
     (updatedContent: ContentType) =>
-      updatePageContent(updatedContent, folder_id, page_id, currenContent._id),
+      updatePageContent(updatedContent, folder_id, page_id, currentContent._id),
     {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["folder"] });
@@ -47,7 +47,7 @@ export default function Content({
 
   const deleteMutation = useMutation(
     (content: ContentType) =>
-      deletePageContent(content, folder_id, page_id, currenContent._id),
+      deletePageContent(content, folder_id, page_id, currentContent._id),
     {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["folder"] });
@@ -60,7 +60,6 @@ export default function Content({
     const updatedContent: ContentType = {
       elem: e.target.elem.value,
       text: e.target.text.value,
-      _id: currentContent?._id,
     };
     if (updatedContent.text === "") {
       deleteMutation.mutate({ ...currentContent });
@@ -127,7 +126,7 @@ export default function Content({
         hover:bg-neutral-800
         focus:bg-neutral-800
         key={key}
-        value={currentContent.text}
+        value={currentContent?.text}
         className={handleElem(currentContent.elem)}
         onChange={(e) =>
           setCurrentContent({ ...currentContent, text: e.target.value })

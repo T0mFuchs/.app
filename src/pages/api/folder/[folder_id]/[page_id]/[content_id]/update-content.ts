@@ -20,7 +20,7 @@ const handler: NextApiHandler = async (req, res: NextApiResponse) => {
           "pages._id": page_id,
           "pages.content._id": content_id,
         },
-        { $set: { content: update } },
+        { $set: { "pages.$.content": update } },
         { returnDocument: "after", upsert: true }
       );
       res.status(200).json(response);
