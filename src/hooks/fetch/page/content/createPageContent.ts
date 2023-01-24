@@ -1,12 +1,12 @@
-import { Content } from "@/types";
+import { PageContent } from "@/types";
 
 export async function createPageContent(
-  content: Content,
+  content: PageContent,
   folder_id: string,
   page_id: string
 ) {
   const response = await fetch(
-    `/api/folder/${folder_id}/${page_id}/create-content`,
+    `/api/folder/${folder_id}/${page_id}/content/create-content`,
     {
       body: JSON.stringify(content),
       headers: {

@@ -26,6 +26,10 @@ body{
   }
 }
 
+.tt5050{
+  transform: translate(-50%, -50%);
+}
+
 .at[data-state="open"] > .i{
   transform: rotate(180deg);
 }
@@ -53,5 +57,33 @@ body{
   }
   to {
     height: 0;
+  }
+}
+/* dialog.overlay */
+.do{
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* dialog.content */
+.dc{
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes overlayShow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
 }

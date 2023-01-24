@@ -1,12 +1,13 @@
 // @ts-nocheck
 import React from "react";
 import { Label } from "@radix-ui/react-label";
+import { Separator } from "@radix-ui/react-separator";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 import { updatePageContent } from "@/hooks/fetch/page/content/updatePageContent";
 import { deletePageContent } from "@/hooks/fetch/page/content/deletePageContent";
 
-import type { Content as ContentType } from "@/types";
+import type { PageContent as PageContentType } from "@/types";
 
 const handleElem = (elem: string) => {
   if (elem === "h1") return "m-2 font-900 text-size-5 leading-7";
@@ -19,24 +20,24 @@ const handleElem = (elem: string) => {
   if (elem === "li") return "li leading-4";
 };
 
-export default function Content({
+export default function PageContent({
   content,
   folder_id,
   page_id,
   key,
 }: {
-  content: ContentType;
+  content: PageContentType;
   folder_id?: string;
   page_id?: string;
   key?: React.Key;
 }) {
   const [currentContent, setCurrentContent] =
-    React.useState<ContentType>(content);
+    React.useState<PageContentType>(content);
 
   const queryClient = useQueryClient();
 
   const updateMutation = useMutation(
-    (updatedContent: ContentType) =>
+    (updatedContent: PageContentType) =>
       updatePageContent(updatedContent, folder_id, page_id, currentContent._id),
     {
       onSuccess: () => {
@@ -46,7 +47,7 @@ export default function Content({
   );
 
   const deleteMutation = useMutation(
-    (content: ContentType) =>
+    (content: PageContentType) =>
       deletePageContent(content, folder_id, page_id, currentContent._id),
     {
       onSuccess: () => {
@@ -57,7 +58,7 @@ export default function Content({
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const updatedContent: ContentType = {
+    const updatedContent: PageContentType = {
       elem: e.target.elem.value,
       text: e.target.text.value,
     };
@@ -65,7 +66,10 @@ export default function Content({
       deleteMutation.mutate({ ...currentContent });
       return;
     }
-    if (currentContent?.text !== content.text) {
+    if (
+      currentContent?.text !== content.text ||
+      currentContent?.elem !== content.elem
+    ) {
       updateMutation.mutate({ ...updatedContent });
       return;
     }
@@ -74,69 +78,73 @@ export default function Content({
   //! todo: add select field but make them opacity 0 and only set them to 1 on hover & focus
 
   return (
-    <form pt-1 onSubmit={onSubmit}>
-      <Label htmlFor="elem" />
-      <select
-        name="elem"
-        defaultValue={content.elem}
-        border-1
-        border-transparent
-        rounded
-        leading-4
-        text-base
-        hover:border-neutral-400
-        focus:border-neutral-400
-        hover:animate-pulse
-        focus:animate-pulse
-        outline-none
-        w-12
-        text-center
-        relative
-        right-2
-        onChange={(e) =>
-          setCurrentContent({ ...currentContent, elem: e.target.value })
-        }
-      >
-        <option w-12 value="p">
-          p
-        </option>
-        <option value="h1">h1</option>
-        <option w-12 value="h2">
-          h2
-        </option>
-        <option w-12 value="h3">
-          h3
-        </option>
-        <option w-12 value="ul">
-          ul
-        </option>
-        <option w-12 value="ol">
-          ol
-        </option>
-        <option w-12 value="li">
-          li
-        </option>
-      </select>
-      <Label htmlFor="text" />
-      <input
-        m-0
-        p-1
-        border-0
-        rounded
-        leading-4
-        text-base
-        bg-transparent
-        hover:bg-neutral-800
-        focus:bg-neutral-800
-        outline-none
-        key={key}
-        value={currentContent?.text}
-        className={handleElem(currentContent.elem)}
-        onChange={(e) =>
-          setCurrentContent({ ...currentContent, text: e.target.value })
-        }
-        name="text"
-      />
-    </form>
+    <>
+      <form pt-1 onSubmit={onSubmit}>
+        <Label htmlFor="elem" />
+        <select
+          name="elem"
+          defaultValue={content.elem}
+          border-1
+          border-transparent
+          rounded
+          leading-4
+          text-base
+          hover:border-neutral-400
+          focus:border-neutral-400
+          hover:animate-pulse
+          focus:animate-pulse
+          outline-none
+          w-12
+          text-center
+          relative
+          right-2
+          onChange={(e) =>
+            setCurrentContent({ ...currentContent, elem: e.target.value })
+          }
+        >
+          <option w-12 value="p">
+            p
+          </option>
+          <option value="h1">h1</option>
+          <option w-12 value="h2">
+            h2
+          </option>
+          <option w-12 value="h3">
+            h3
+          </option>
+          <option w-12 value="ul">
+            ul
+          </option>
+          <option w-12 value="ol">
+            ol
+          </option>
+          <option w-12 value="li">
+            li
+          </option>
+        </select>
+        <Label htmlFor="text" />
+        <input
+          m-0
+          p-1
+          border-0
+          rounded
+          leading-4
+          text-base
+          bg-transparent
+          hover:bg-neutral-800
+          focus:bg-neutral-800
+          outline-none
+          key={key}
+          value={currentContent?.text}
+          className={handleElem(currentContent.elem)}
+          onChange={(e) =>
+            setCurrentContent({ ...currentContent, text: e.target.value })
+          }
+          name="text"
+          type="text"
+        />
+      </form>
+      <Separator w="95%" bg-neutral h="1px" mt-1 />
+    </>
   );
 }

@@ -1,13 +1,8 @@
 // @ts-nocheck
 import React from "react";
 import Link from "next/link";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionHeader,
-  AccordionTrigger,
-  AccordionContent,
-} from "@radix-ui/react-accordion";
+import * as Accordion from "@radix-ui/react-accordion";
+import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { Label } from "@radix-ui/react-label";
 
 import { useQueryClient, useMutation } from "@tanstack/react-query";
@@ -27,8 +22,9 @@ export default function Index({
   folder: Folder;
   key?: React.Key;
 }) {
-  const [open, setOpen] = React.useState(false);
-  const [currentFolder, setCurrentFolder] = React.useState<Folder>(null);
+  const [openWarning, setOpenWarning] = React.useState(false);
+  const [openConfirm, setOpenConfirm] = React.useState(false);
+  const [currentFolder, setCurrentFolder] = React.useState<Folder>(folder);
 
   const queryClient = useQueryClient();
 
@@ -57,29 +53,85 @@ export default function Index({
       pages: currentFolder?.pages,
       iat: currentFolder?.iat,
     };
+
     if (updatedFolder.name === "") {
-      deleteMutation.mutate({ ...currentFolder });
-      return;
+      if (updatedFolder.pages?.length > 0 && openWarning) {
+        setOpenConfirm(true);
+        return;
+      }
+      if (updatedFolder.pages?.length > 0 && !openWarning) {
+        setOpenWarning(true);
+        setTimeout(() => setOpenWarning(false), 5000);
+        return;
+      } else {
+        deleteMutation.mutate({ ...currentFolder });
+        setOpenWarning(false);
+        return;
+      }
     }
     if (currentFolder?.name !== folder.name) {
       updateMutation.mutate({ ...updatedFolder });
-      return;
+      setCurrentFolder(null);
     }
   };
 
   return (
     <>
-      <Accordion type="multiple" key={key}>
-        <AccordionItem value={`item-folder-${folder?._id}`}>
-          <AccordionHeader>
-            <AccordionTrigger
+      <AlertDialog.Root open={openConfirm} onOpenChange={setOpenConfirm}>
+        <AlertDialog.Portal>
+          <AlertDialog.Overlay
+            inset-0
+            fixed
+            bg-neutral="900/95"
+            className="do"
+          />
+          <AlertDialog.Content
+            fixed
+            top="1/2"
+            left="1/2"
+            shadow-xl
+            shadow-neutral="800/30"
+            className="tt5050 dc"
+          >
+            <button
+              autoFocus
+              focus:animate-pulse
+              px-1
+              border-0
+              rounded
+              text-base
+              text-red
+              font-700
+              outline-none
+              onClick={() => {
+                deleteMutation.mutate({ ...currentFolder });
+                setOpenConfirm(false);
+                setOpenWarning(false);
+              }}
+            >
+              confirm deletion
+            </button>
+          </AlertDialog.Content>
+        </AlertDialog.Portal>
+      </AlertDialog.Root>
+      <Accordion.Root type="multiple" key={key}>
+        <Accordion.Item value={`item-folder-${folder?._id}`}>
+          <Accordion.Header>
+            {openWarning ? (
+              <div text-red font-700 animate-pulse leading-4 text-sm pb-1>
+                {"<!> "}this folder is <span underline>not</span> empty{" <!>"}
+              </div>
+            ) : null}
+            <Accordion.Trigger
               border-0
               bg-transparent
+              rounded
               hover:animate-pulse
               focus:animate-pulse
               outline-none
               inline-flex
-              className="at"
+              shadow-lg
+              className="hover:shadow-neutral-800/30 focus:shadow-neutral-800/30 at"
             >
               <span i-mdi-folder relative top-2 right-2 />
               <form onSubmit={onSubmit}>
@@ -96,11 +148,6 @@ export default function Index({
                   hover:bg-neutral-800
                   focus:bg-neutral-800
                   outline-none
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                    }
-                  }}
                   onFocus={() => setCurrentFolder(folder)}
                   onChange={(e) =>
                     setCurrentFolder({
@@ -125,27 +172,32 @@ export default function Index({
                 transition-transform
                 duration-300
               />
-            </AccordionTrigger>
-          </AccordionHeader>
+            </Accordion.Trigger>
+          </Accordion.Header>
           <div aria-hidden p-1 />
           {folder.pages?.[0] !== null ? (
             <>
               {folder.pages?.map((page, index) => (
-                <AccordionContent className="ac" key={page._id} relative left-3>
+                <Accordion.Content
+                  className="ac"
+                  key={page._id}
+                  relative
+                  left-3
+                >
                   <Page
                     page={page}
                     index={index}
                     folder_id={folder._id as string}
                   />
-                </AccordionContent>
+                </Accordion.Content>
               ))}
             </>
           ) : null}
-          <AccordionContent className="ac" relative left-3>
+          <Accordion.Content className="ac" relative left-3>
             <NewPage folder_id={folder._id as string} />
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+          </Accordion.Content>
+        </Accordion.Item>
+      </Accordion.Root>
     </>
   );
 }

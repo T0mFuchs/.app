@@ -1,13 +1,13 @@
-import { Content } from "@/types";
+import { PageContent } from "@/types";
 
 export async function deletePageContent(
-  content: Content,
+  content: PageContent,
   folder_id: string,
   page_id: string,
   content_id: string
 ) {
   const response = await fetch(
-    `/api/folder/${folder_id}/${page_id}/${content_id}/delete-content`,
+    `/api/folder/${folder_id}/${page_id}/content/${content_id}/delete-content`,
     {
       body: JSON.stringify(content),
       headers: {

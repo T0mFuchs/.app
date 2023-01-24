@@ -4,7 +4,7 @@ import { Label } from "@radix-ui/react-label";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { createPageContent } from "@/hooks/fetch/page/content/createPageContent";
 
-import type { Content } from "@/types";
+import type { PageContent as PageContentType } from "@/types";
 
 const handleElem = (elem: string) => {
   if (elem === "h1") return "m-2 font-900 text-size-5 leading-7";
@@ -24,11 +24,11 @@ export default function NewPageContent({
   folder_id: string;
   page_id: string;
 }) {
-  const [content, setContent] = React.useState<Content>(null);
+  const [content, setContent] = React.useState<PageContentType>(null);
 
   const queryClient = useQueryClient();
   const createMutation = useMutation(
-    (newContent: Content) => {
+    (newContent: PageContentType) => {
       createPageContent(newContent, folder_id, page_id);
     },
     {
@@ -42,9 +42,8 @@ export default function NewPageContent({
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const newContent: Content = {
+    const newContent: PageContentType = {
       elem: e.target.elem.value,
-      // @ts-ignore
       text: e.target.text.value,
     };
     createMutation.mutate({ ...newContent });

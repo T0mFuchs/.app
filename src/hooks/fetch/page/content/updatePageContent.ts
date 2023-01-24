@@ -1,13 +1,13 @@
-import { Content } from "@/types";
+import { PageContent } from "@/types";
 
 export async function updatePageContent(
-  content: Content,
+  content: PageContent,
   folder_id: string,
   page_id: string,
   content_id: string
 ) {
   const response = await fetch(
-    `/api/folder/${folder_id}/${page_id}/${content_id}/update-content`,
+    `/api/folder/${folder_id}/${page_id}/content/${content_id}/update-content`,
     {
       body: JSON.stringify(content),
       headers: {

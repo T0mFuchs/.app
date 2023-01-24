@@ -19,8 +19,4 @@ export default defineConfig({
   ],
   transformers: [transformerAttributifyJsx()],
   shortcuts: [],
-  theme: {
-    colors: {},
-  },
-  rules: [],
 });
