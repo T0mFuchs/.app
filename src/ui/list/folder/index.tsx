@@ -72,7 +72,6 @@ export default function Index({ folder }: { folder: Folder }) {
       currentFolder?.color !== folder.color
     ) {
       updateMutation.mutate({ ...updatedFolder });
-      setCurrentFolder(null);
     }
   };
 

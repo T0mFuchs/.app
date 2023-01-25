@@ -23,8 +23,10 @@ export const pageSchema = new mongoose.Schema({
   ],
   iat: {
     type: Number,
+    required: true,
   },
   eat: {
     type: Number,
+    required: true,
   },
 });

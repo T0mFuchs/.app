@@ -2,7 +2,7 @@
 import React from "react";
 import { Label } from "@radix-ui/react-label";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-
+import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 import { updateFolderTag } from "@/hooks/fetch/folder/tag/updateFolderTag";
 import { deleteFolderTag } from "@/hooks/fetch/folder/tag/deleteFolderTag";
 
@@ -53,8 +53,27 @@ export default function FolderTag({
     }
   };
 
+  const colorRef = React.useRef(null);
+  const formRef = React.useRef(null);
+  useOnClickOutside(formRef, () => (colorRef.current.style.opacity = 0));
+  const mouseEnter = (e) => {
+    colorRef.current.style.opacity = 1;
+  };
+  const mouseLeave = (e) => {
+    colorRef.current.style.opacity = 0;
+  };
+
   return (
-    <form pt-1 onSubmit={onSubmit}>
+    <form
+      pt-1
+      pl="2.5"
+      relative top--2
+      onSubmit={onSubmit}
+      onMouseEnter={mouseEnter}
+      onMouseDown={mouseEnter}
+      onMouseLeave={mouseLeave}
+      ref={formRef}
+    >
       <Label htmlFor="color" />
       <input
         type="color"
@@ -64,7 +83,6 @@ export default function FolderTag({
         i-mdi-dots-circle
         relative
         right-1
-        top="-.3"
         border-0
         rounded
         leading-4
@@ -79,8 +97,9 @@ export default function FolderTag({
         }
         style={{
           backgroundColor: currentTag?.color ?? "#000000",
-          fill: currentTag?.color ?? "var(--text)",
+          opacity: 0,
         }}
+        ref={colorRef}
       />
       <Label htmlFor="name" />
       <input

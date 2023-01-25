@@ -8,8 +8,18 @@ import { fetcher } from "@/lib/fetcher";
 
 import type { Folder } from "@/types";
 
-const DynamicFolder = dynamic(() => import("@/ui/app/folder"));
-const DynamicNewFolder = dynamic(() => import("@/ui/app/folder/new"));
+const TabsRoot = dynamic(() => import("@/ui/lazy-export/radix-ui/tabs/root"));
+const TabsList = dynamic(() => import("@/ui/lazy-export/radix-ui/tabs/list"));
+const TabsTrigger = dynamic(
+  () => import("@/ui/lazy-export/radix-ui/tabs/trigger")
+);
+const TabsContent = dynamic(
+  () => import("@/ui/lazy-export/radix-ui/tabs/content")
+);
+const ListFolder = dynamic(() => import("@/ui/list/folder"));
+const NewListFolder = dynamic(() => import("@/ui/list/folder/new"));
+const TableFolder = dynamic(() => import("@/ui/table/folder"));
+const NewTableFolder = dynamic(() => import("@/ui/table/folder/new"));
 
 export default function Index() {
   const { data, isLoading, isFetching } = useQuery<[Folder]>(["folder"], () =>
@@ -22,15 +32,47 @@ export default function Index() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content="take notes" />
       </Head>
-      <div grid justify-center pt-8>
+      <>
         {data ? (
           <React.Suspense>
-            {data?.map((folder, index) => (
-              <div key={index}>
-                <DynamicFolder folder={folder} />
-              </div>
-            ))}
-            <DynamicNewFolder />
+            <TabsRoot defaultValue="list" grid absolute top-8 left-8>
+              <TabsList flex gap-1 pb-6>
+                <TabsTrigger
+                  bg-transparent
+                  border-0
+                  text-6
+                  value="list"
+                  className="tatr"
+                >
+                  <span i-mdi-format-list-bulleted />
+                </TabsTrigger>
+                <TabsTrigger
+                  bg-transparent
+                  border-0
+                  text-6
+                  value="table"
+                  className="tatr"
+                >
+                  <span i-mdi-table />
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent grid outline-none value="list">
+                {data.map((folder, index) => (
+                  <div key={index}>
+                    <ListFolder folder={folder} />
+                  </div>
+                ))}
+                <NewListFolder />
+              </TabsContent>
+              <TabsContent flex-grow outline-none value="table">
+                {data.map((folder, index) => (
+                  <div key={index}>
+                    <TableFolder folder={folder} />
+                  </div>
+                ))}
+                <NewTableFolder />
+              </TabsContent>
+            </TabsRoot>
           </React.Suspense>
         ) : null}
         {isLoading ? (
@@ -43,7 +85,7 @@ export default function Index() {
             <h2>`update-skeleton`</h2>
           </>
         ) : null}
-      </div>
+      </>
       <div aria-hidden p-8 />
     </>
   );

@@ -26,6 +26,10 @@ body{
   }
 }
 
+.tatr[data-state="active"]{
+  border-bottom: 1px solid #262626;
+}
+
 .tt5050{
   transform: translate(-50%, -50%);
 }
