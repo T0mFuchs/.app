@@ -3,33 +3,24 @@ import React from "react";
 import { Label } from "@radix-ui/react-label";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 
-import { createPageTag } from "@/hooks/fetch/page/tag/createPageTag";
+import { createFolderTag } from "@/hooks/fetch/folder/tag/createFolderTag";
 
-import type { Tag as PageTag } from "@/types";
+import type { Tag as FolderTag } from "@/types";
 
-export default function Content({
-  folder_id,
-  page_id,
-}: {
-  folder_id?: string;
-  page_id?: string;
-}) {
-  const [tag, setTag] = React.useState<PageTag>(null);
+export default function Content({ folder_id }: { folder_id?: string }) {
+  const [tag, setTag] = React.useState<FolderTag>(null);
 
   const queryClient = useQueryClient();
 
-  const createMutation = useMutation(
-    (tag) => createPageTag(tag, folder_id, page_id),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["folder"] });
-      },
-    }
-  );
+  const createMutation = useMutation((tag) => createFolderTag(tag, folder_id), {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["folder"] });
+    },
+  });
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const updatedTag: PageTag = {
+    const updatedTag: FolderTag = {
       name: e.target.name.value,
       color: e.target.color.value,
     };
@@ -94,14 +85,14 @@ export default function Content({
         focus:bg-neutral-800
         outline-none
         value={tag?.name ?? ""}
+        placeholder="+"
+        title="add tag"
         onChange={(e) => setTag({ ...tag, name: e.target.value })}
         style={{
           width: `${
             tag?.name ? (tag?.name.length > 3 ? tag?.name.length / 1.9 : 2) : 4
           }rem`,
         }}
-        placeholder="+"
-        title="add tag"
       />
     </form>
   );

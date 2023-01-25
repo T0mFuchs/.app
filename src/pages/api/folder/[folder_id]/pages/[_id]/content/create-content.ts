@@ -3,23 +3,18 @@ import { folder } from "@/models";
 import mongooseConnect from "@/lib/mongoose-connect";
 
 const handler: NextApiHandler = async (req, res: NextApiResponse) => {
-  if (req.method === "PUT") {
-    const { folder_id, page_id } = req.query;
-    const { title, tags, content, iat } = req.body;
-    if (!title || !iat) {
+  if (req.method === "POST") {
+    const folder_id = req.query.folder_id as string;
+    const page_id = req.query._id as string;
+    const { elem, text } = req.body;
+    if (!elem || !text) {
       res.status(400).end();
     } else {
-      const update = {
-        title: title,
-        tags: tags ? tags : [],
-        content: content ? content : [],
-        iat: iat,
-        eat: Date.now(),
-      };
+      const content = { elem: elem, text: text };
       await mongooseConnect();
       const response = await folder.findOneAndUpdate(
         { _id: folder_id, "pages._id": page_id },
-        { $set: { pages: update } },
+        { $push: { "pages.$.content": content } },
         { returnDocument: "after", upsert: true }
       );
       res.status(200).json(response);

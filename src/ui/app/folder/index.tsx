@@ -12,16 +12,12 @@ import { deleteOneFolder } from "@/hooks/fetch/folder/deleteOneFolder";
 
 import Page from "./page";
 import NewPage from "./page/new";
+import FolderTag from "./tag";
+import NewFolderTag from "./tag/new";
 
 import type { Folder } from "@/types";
 
-export default function Index({
-  folder,
-  key,
-}: {
-  folder: Folder;
-  key?: React.Key;
-}) {
+export default function Index({ folder }: { folder: Folder }) {
   const [openWarning, setOpenWarning] = React.useState(false);
   const [openConfirm, setOpenConfirm] = React.useState(false);
   const [currentFolder, setCurrentFolder] = React.useState<Folder>(folder);
@@ -50,6 +46,8 @@ export default function Index({
     const updatedFolder: Folder = {
       _id: currentFolder?._id,
       name: e.target.name.value,
+      color: e.target.color.value,
+      tags: currentFolder?.tags,
       pages: currentFolder?.pages,
       iat: currentFolder?.iat,
     };
@@ -69,7 +67,10 @@ export default function Index({
         return;
       }
     }
-    if (currentFolder?.name !== folder.name) {
+    if (
+      currentFolder?.name !== folder.name ||
+      currentFolder?.color !== folder.color
+    ) {
       updateMutation.mutate({ ...updatedFolder });
       setCurrentFolder(null);
     }
@@ -114,7 +115,7 @@ export default function Index({
           </AlertDialog.Content>
         </AlertDialog.Portal>
       </AlertDialog.Root>
-      <Accordion.Root type="multiple" key={key}>
+      <Accordion.Root type="multiple">
         <Accordion.Item value={`item-folder-${folder?._id}`}>
           <Accordion.Header>
             {openWarning ? (
@@ -133,8 +134,27 @@ export default function Index({
               shadow-lg
               className="hover:shadow-neutral-800/30 focus:shadow-neutral-800/30 at"
             >
-              <span i-mdi-folder relative top-2 right-2 />
               <form onSubmit={onSubmit}>
+                <Label htmlFor="color" />
+                <input
+                  i-mdi-folder-outline
+                  relative
+                  right="1.5"
+                  top="-.5"
+                  outline-none
+                  type="color"
+                  name="color"
+                  value={currentFolder?.color ?? "var(--text)"}
+                  onChange={(e) =>
+                    setCurrentFolder({
+                      ...currentFolder,
+                      color: e.target.value,
+                    })
+                  }
+                  style={{
+                    backgroundColor: currentFolder?.color ?? "var(--text)",
+                  }}
+                />
                 <Label htmlFor="name" />
                 <input
                   type="text"
@@ -148,7 +168,6 @@ export default function Index({
                   hover:bg-neutral-800
                   focus:bg-neutral-800
                   outline-none
-                  onFocus={() => setCurrentFolder(folder)}
                   onChange={(e) =>
                     setCurrentFolder({
                       ...currentFolder,
@@ -174,6 +193,14 @@ export default function Index({
               />
             </Accordion.Trigger>
           </Accordion.Header>
+          <span inline-flex>
+            {folder.tags?.map((tag, index) => (
+              <div key={index}>
+                <FolderTag tag={tag} folder_id={folder._id as string} />
+              </div>
+            ))}
+            <NewFolderTag folder_id={folder._id as string} />
+          </span>
           <div aria-hidden p-1 />
           {folder.pages?.[0] !== null ? (
             <>

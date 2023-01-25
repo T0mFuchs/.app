@@ -1,16 +1,13 @@
+import { Tag } from "./Tag";
+
 export type Page = {
   _id?: string;
   title?: string;
-  tags?: [{ name: string }];
+  color?: string;
+  tags?: [Tag];
   content?: [PageContent];
   iat?: number; // issued at
   eat?: number; // edited at
-};
-
-export type PageTag = {
-  _id?: string;
-  name?: string;
-  color?: string;
 };
 
 export type PageContent = {

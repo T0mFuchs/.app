@@ -4,7 +4,9 @@ import mongooseConnect from "@/lib/mongoose-connect";
 
 const handler: NextApiHandler = async (req, res: NextApiResponse) => {
   if (req.method === "PUT") {
-    const { folder_id, page_id, content_id } = req.query;
+    const folder_id = req.query.folder_id as string;
+    const page_id = req.query._id as string;
+    const content_id = req.query.content_id as string;
     const { elem, text } = req.body;
     if (!elem || !text) {
       res.status(400).end();

@@ -3,27 +3,24 @@ import React from "react";
 import { Label } from "@radix-ui/react-label";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 
-import { updatePageTag } from "@/hooks/fetch/page/tag/updatePageTag";
-import { deletePageTag } from "@/hooks/fetch/page/tag/deletePageTag";
+import { updateFolderTag } from "@/hooks/fetch/folder/tag/updateFolderTag";
+import { deleteFolderTag } from "@/hooks/fetch/folder/tag/deleteFolderTag";
 
-import type { Tag as PageTag } from "@/types";
+import type { Tag as FolderTag } from "@/types";
 
-export default function PageTag({
+export default function FolderTag({
   tag,
   folder_id,
-  page_id,
 }: {
-  tag: PageTag;
+  tag: FolderTag;
   folder_id?: string;
-  page_id?: string;
 }) {
-  const [currentTag, setCurrentTag] = React.useState<PageTag>(tag);
+  const [currentTag, setCurrentTag] = React.useState<FolderTag>(tag);
 
   const queryClient = useQueryClient();
 
   const updateMutation = useMutation(
-    (updatedTag) =>
-      updatePageTag(updatedTag, folder_id, page_id, currentTag._id),
+    (updatedTag) => updateFolderTag(updatedTag, folder_id, currentTag._id),
     {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["folder"] });
@@ -32,7 +29,7 @@ export default function PageTag({
   );
 
   const deleteMutation = useMutation(
-    (tag) => deletePageTag(tag, folder_id, page_id, currentTag._id),
+    (tag) => deleteFolderTag(tag, folder_id, currentTag._id),
     {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["folder"] });
@@ -42,7 +39,7 @@ export default function PageTag({
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const updatedTag: PageTag = {
+    const updatedTag: FolderTag = {
       name: e.target.name.value,
       color: e.target.color.value,
     };
@@ -81,7 +78,7 @@ export default function PageTag({
           setCurrentTag({ ...currentTag, color: e.target.value })
         }
         style={{
-          backgroundColor: currentTag?.color ?? "var(--text)",
+          backgroundColor: currentTag?.color ?? "#000000",
           fill: currentTag?.color ?? "var(--text)",
         }}
       />

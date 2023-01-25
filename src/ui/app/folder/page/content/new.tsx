@@ -110,6 +110,8 @@ export default function NewPageContent({
           className={content?.elem ? handleElem(content.elem) : ""}
           onChange={(e) => setContent({ ...content, text: e.target.value })}
           name="text"
+          placeholder="..."
+          title="add line"
         />
       </form>
     </>

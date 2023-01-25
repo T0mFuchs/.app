@@ -7,15 +7,20 @@ const handler: NextApiHandler = async (
   res: NextApiResponse
 ) => {
   if (req.method === "POST") {
-    const { name } = req.body;
-    await mongooseConnect();
-    const timestamp = Date.now();
-    const newFolder = new folder({
-      name: name,
-      iat: timestamp,
-      eat: timestamp,
-    });
-    await newFolder.save().then(() => res.status(200).end());
+    const { name, color } = req.body;
+    if (!name || !color) {
+      return res.status(400).end();
+    } else {
+      await mongooseConnect();
+      const timestamp = Date.now();
+      const newFolder = new folder({
+        name: name,
+        color: color,
+        iat: timestamp,
+        eat: timestamp,
+      });
+      await newFolder.save().then(() => res.status(200).end());
+    }
   }
 };
 

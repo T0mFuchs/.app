@@ -7,7 +7,7 @@ export async function deleteOnePage(
 ) {
   const route =
     folder_id && page_id
-      ? `/api/folder/${folder_id}/${page_id}/delete-page`
+      ? `/api/folder/${folder_id}/pages/${page_id}/delete-page`
       : "/api/page/delete-page";
   const response = await fetch(route, {
     body: JSON.stringify(page),

@@ -25,8 +25,10 @@ export default function Index() {
       <div grid justify-center pt-8>
         {data ? (
           <React.Suspense>
-            {data?.map((folder) => (
-              <DynamicFolder folder={folder} key={folder._id} />
+            {data?.map((folder, index) => (
+              <div key={index}>
+                <DynamicFolder folder={folder} />
+              </div>
             ))}
             <DynamicNewFolder />
           </React.Suspense>

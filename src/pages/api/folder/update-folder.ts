@@ -8,14 +8,16 @@ const handler: NextApiHandler = async (
   res: NextApiResponse
 ) => {
   if (req.method === "PUT") {
-    const { _id, name, pages, iat } = req.body;
-    if (!_id || !name || !pages || !iat) {
+    const { _id, name, color, tags, pages, iat } = req.body;
+    if (!_id || !name || !color || !tags || !pages || !iat) {
       res.status(400).end();
     } else {
       await mongooseConnect();
       const updatedFolder: Folder = {
         _id: _id,
         name: name,
+        color: color,
+        tags: tags,
         pages: pages,
         iat: iat,
         eat: Date.now(),

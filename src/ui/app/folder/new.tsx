@@ -23,15 +23,44 @@ export default function New() {
     e.preventDefault();
     const newFolder: Folder = {
       name: e.target.name.value,
+      color: e.target.color.value,
     };
     createMutation.mutate({ ...newFolder });
-    setFolder(null);
+  };
+
+  const ref = React.useRef(null);
+  const mouseEnter = (e) => {
+    ref.current.style.opacity = 1;
+  };
+  const mouseLeave = (e) => {
+    ref.current.style.opacity = 0;
   };
 
   return (
-    <div inline-flex>
-      <span i-mdi-folder-outline relative top-2 right-1 />
+    <div
+      inline-flex
+      relative
+      left-1
+      onMouseEnter={mouseEnter}
+      onMouseLeave={mouseLeave}
+    >
       <form pt-1 onSubmit={onSubmit}>
+        <Label htmlFor="color" />
+        <input
+          i-mdi-folder-outline
+          relative
+          right="1.5"
+          top="-.5"
+          type="color"
+          name="color"
+          value={folder?.color ?? "var(--text)"}
+          onChange={(e) => setFolder({ ...folder, color: e.target.value })}
+          style={{
+            backgroundColor: folder?.color ?? "var(--text)",
+            opacity: 0,
+          }}
+          ref={ref}
+        />
         <Label htmlFor="name" />
         <input
           type="text"
@@ -46,8 +75,9 @@ export default function New() {
           outline-none
           name="name"
           value={folder?.name ?? ""}
-          onChange={(e) => setFolder({ name: e.target.value })}
-          placeholder=""
+          onChange={(e) => setFolder({ ...folder, name: e.target.value })}
+          placeholder="..."
+          title="add folder"
         />
       </form>
     </div>

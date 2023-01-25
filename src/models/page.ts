@@ -5,6 +5,10 @@ export const pageSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  color: {
+    type: String,
+    required: true,
+  },
   tags: [
     {
       name: String,

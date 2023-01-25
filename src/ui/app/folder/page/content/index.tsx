@@ -24,12 +24,10 @@ export default function PageContent({
   content,
   folder_id,
   page_id,
-  key,
 }: {
   content: PageContentType;
   folder_id?: string;
   page_id?: string;
-  key?: React.Key;
 }) {
   const [currentContent, setCurrentContent] =
     React.useState<PageContentType>(content);
@@ -134,7 +132,6 @@ export default function PageContent({
           hover:bg-neutral-800
           focus:bg-neutral-800
           outline-none
-          key={key}
           value={currentContent?.text}
           className={handleElem(currentContent.elem)}
           onChange={(e) =>

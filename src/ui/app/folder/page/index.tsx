@@ -20,11 +20,9 @@ import type { Page } from "@/types";
 export default function Page({
   page,
   folder_id,
-  key,
 }: {
   page: Page;
   folder_id?: string;
-  key?: React.Key;
 }) {
   const [openWarning, setOpenWarning] = React.useState(false);
   const [openConfirm, setOpenConfirm] = React.useState(false);
@@ -56,6 +54,7 @@ export default function Page({
     const updatedPage: Page = {
       _id: currentPage?._id,
       title: e.target.title.value,
+      color: e.target.color.value,
       tags: currentPage?.tags,
       content: currentPage?.content,
       iat: currentPage?.iat,
@@ -75,9 +74,11 @@ export default function Page({
         return;
       }
     }
-    if (currentPage?.title !== page.title) {
+    if (
+      currentPage?.title !== page.title ||
+      currentPage?.color !== page.color
+    ) {
       updateMutation.mutate({ ...updatedPage });
-      setCurrentPage(null);
     }
   };
 
@@ -139,8 +140,24 @@ export default function Page({
               shadow-lg
               className="hover:shadow-neutral-800/30 focus:shadow-neutral-800/30 at"
             >
-              <span i-mdi-file relative top-1 right-1 />
               <form onSubmit={onSubmit}>
+                <Label htmlFor="color" />
+                <input
+                  i-mdi-file
+                  relative
+                  right="1.5"
+                  top="-.5"
+                  outline-none
+                  type="color"
+                  name="color"
+                  value={currentPage?.color ?? "var(--text)"}
+                  onChange={(e) =>
+                    setCurrentPage({ ...currentPage, color: e.target.value })
+                  }
+                  style={{
+                    backgroundColor: currentPage?.color ?? "var(--text)",
+                  }}
+                />
                 <Label htmlFor="title" />
                 <input
                   type="text"
@@ -154,7 +171,6 @@ export default function Page({
                   hover:bg-neutral-800
                   focus:bg-neutral-800
                   outline-none
-                  onFocus={() => setCurrentPage(page)}
                   onChange={(e) =>
                     setCurrentPage({
                       ...currentPage,
