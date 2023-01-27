@@ -14,7 +14,10 @@ export default function New() {
     e.preventDefault();
     const newFolder: Folder = {
       name: e.target.name.value,
-      color: e.target.color.value,
+      color:
+        e.target.color.value === "#000000"
+          ? "var(--text)"
+          : e.target.color.value,
     };
     createFolder.mutate({ ...newFolder });
     setFolder(null);
@@ -45,7 +48,7 @@ export default function New() {
           top="-.5"
           type="color"
           name="color"
-          value={folder?.color ?? "var(--text)"}
+          value={folder?.color ?? "#000000"}
           onChange={(e) => setFolder({ ...folder, color: e.target.value })}
           style={{
             backgroundColor: folder?.color ?? "var(--text)",
@@ -68,6 +71,11 @@ export default function New() {
           name="name"
           value={folder?.name ?? ""}
           onChange={(e) => setFolder({ ...folder, name: e.target.value })}
+          style={{
+            width: `${
+              folder && folder.name?.length > 3 ? folder?.name?.length + 1 : 4
+            }ch`,
+          }}
           placeholder="..."
           title="add folder"
         />

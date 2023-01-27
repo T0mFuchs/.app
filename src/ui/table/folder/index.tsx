@@ -91,18 +91,18 @@ export default function Index({ folder }: { folder: Folder }) {
           {"<!> "}this folder is <span underline>not</span> empty{" <!>"}
         </div>
       ) : null}
-      <div>
-        <form onSubmit={onSubmit} inline-flex>
+      <div w-full>
+        <form onSubmit={onSubmit} inline-flex w="30%">
           <Label htmlFor="color" />
           <input
-            i-mdi-folder-outline
+            i-mdi-folder
             relative
             right="1.5"
             top-2
             outline-none
             type="color"
             name="color"
-            value={currentFolder?.color ?? "var(--text)"}
+            value={currentFolder?.color}
             onChange={(e) =>
               setCurrentFolder({
                 ...currentFolder,
@@ -110,7 +110,7 @@ export default function Index({ folder }: { folder: Folder }) {
               })
             }
             style={{
-              backgroundColor: currentFolder?.color ?? "var(--text)",
+              backgroundColor: currentFolder?.color,
             }}
           />
           <Label htmlFor="name" />
@@ -137,9 +137,17 @@ export default function Index({ folder }: { folder: Folder }) {
                 ? currentFolder.name
                 : folder.name
             }
+            style={{
+              width: `${
+                currentFolder && currentFolder.name?.length > 3
+                  ? currentFolder?.name?.length + 1
+                  : 4
+              }ch`,
+            }}
           />
         </form>
         <span
+          w="5%"
           title="sub pages"
           inline-flex
           relative
@@ -152,6 +160,7 @@ export default function Index({ folder }: { folder: Folder }) {
           {folder.pages?.length ?? 0}
         </span>
         <span
+          w="15%"
           title="creation date"
           inline-flex
           relative
@@ -163,6 +172,7 @@ export default function Index({ folder }: { folder: Folder }) {
           {formatISO(new Date(folder.iat), { representation: "date" })}
         </span>
         <span
+          w="20%"
           title="last edited"
           inline-flex
           relative
@@ -175,7 +185,7 @@ export default function Index({ folder }: { folder: Folder }) {
             addSuffix: true,
           })}
         </span>
-        <span inline-flex>
+        <span inline-flex w="30%">
           {folder.tags?.map((tag, index) => (
             <div key={index}>
               <FolderTag tag={tag} folder_id={folder._id as string} />

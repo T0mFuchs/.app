@@ -83,6 +83,7 @@ export default function PageTag({
         rounded
         leading-4
         text-base
+        text-center
         bg-transparent
         hover:bg-neutral-800
         focus:bg-neutral-800
@@ -90,7 +91,11 @@ export default function PageTag({
         value={currentTag?.name}
         onChange={(e) => setCurrentTag({ ...currentTag, name: e.target.value })}
         style={{
-          width: `${currentTag?.name.length / 1.5}rem`,
+          width: `${
+            currentTag && currentTag.name?.length > 3
+              ? currentTag?.name?.length + 1
+              : 4
+          }ch`,
           backgroundColor: currentTag?.color,
         }}
       />

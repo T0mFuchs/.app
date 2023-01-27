@@ -20,7 +20,10 @@ export default function Content({
     e.preventDefault();
     const updatedTag: PageTag = {
       name: e.target.name.value,
-      color: e.target.color.value,
+      color:
+        e.target.color.value === "#000000"
+          ? "var(--tag)"
+          : e.target.color.value,
     };
     createFolderPageTag.mutate({
       folder_id: folder_id,
@@ -66,7 +69,7 @@ export default function Content({
         value={tag?.color ?? "#000000"}
         onChange={(e) => setTag({ ...tag, color: e.target.value })}
         style={{
-          backgroundColor: tag?.color ?? "var(--text)",
+          backgroundColor: tag?.color ?? "var(--tag)",
           opacity: 0,
         }}
         ref={ref}
@@ -89,9 +92,7 @@ export default function Content({
         value={tag?.name ?? ""}
         onChange={(e) => setTag({ ...tag, name: e.target.value })}
         style={{
-          width: `${
-            tag?.name ? (tag?.name.length > 3 ? tag?.name.length / 1.9 : 2) : 4
-          }rem`,
+          width: `${tag && tag.name?.length > 3 ? tag?.name?.length + 1 : 4}ch`,
         }}
         placeholder="+"
         title="add tag"

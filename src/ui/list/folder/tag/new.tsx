@@ -14,7 +14,10 @@ export default function Content({ folder_id }: { folder_id: string }) {
     e.preventDefault();
     const updatedTag: FolderTag = {
       name: e.target.name.value,
-      color: e.target.color.value,
+      color:
+        e.target.color.value === "#000000"
+          ? "var(--tag)"
+          : e.target.color.value,
     };
     createFolderTag.mutateAsync({ folder_id: folder_id, tag: updatedTag });
     setTag(null);
@@ -60,7 +63,7 @@ export default function Content({ folder_id }: { folder_id: string }) {
         value={tag?.color ?? "#000000"}
         onChange={(e) => setTag({ ...tag, color: e.target.value })}
         style={{
-          backgroundColor: tag?.color ?? "var(--text)",
+          backgroundColor: tag?.color ?? "var(--tag)",
           opacity: 0,
         }}
         ref={colorRef}
@@ -85,9 +88,7 @@ export default function Content({ folder_id }: { folder_id: string }) {
         title="add tag"
         onChange={(e) => setTag({ ...tag, name: e.target.value })}
         style={{
-          width: `${
-            tag?.name ? (tag?.name.length > 3 ? tag?.name.length / 1.9 : 2) : 4
-          }rem`,
+          width: `${tag && tag.name?.length > 3 ? tag?.name?.length + 1 : 4}ch`,
         }}
       />
     </form>

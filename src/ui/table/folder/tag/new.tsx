@@ -15,7 +15,10 @@ export default function Content({ folder_id }: { folder_id?: string }) {
     e.preventDefault();
     const newTag: FolderTag = {
       name: e.target.name.value,
-      color: e.target.color.value,
+      color:
+        e.target.color.value === "#000000"
+          ? "var(--tag)"
+          : e.target.color.value,
     };
     createFolderTag.mutate({ folder_id, ...newTag });
     setTag(null);
@@ -88,9 +91,7 @@ export default function Content({ folder_id }: { folder_id?: string }) {
         title="add tag"
         onChange={(e) => setTag({ ...tag, name: e.target.value })}
         style={{
-          width: `${
-            tag?.name ? (tag?.name.length > 3 ? tag?.name.length / 1.9 : 2) : 4
-          }rem`,
+          width: `${tag && tag.name?.length > 3 ? tag?.name?.length + 1 : 4}ch`,
         }}
       />
     </form>

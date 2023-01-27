@@ -19,7 +19,6 @@ const NewTableFolder = dynamic(() => import("@ui/table/folder/new"));
 
 export default function Index() {
   const { data, isLoading, isFetching } = trpc.folder.find.useQuery({});
-  console.log(data);
   return (
     <>
       <Head>
@@ -30,7 +29,7 @@ export default function Index() {
       <>
         {data ? (
           <React.Suspense>
-            <TabsRoot defaultValue="list" grid absolute top-8 left-8>
+            <TabsRoot defaultValue="list" grid absolute top-8 left-8 w-full>
               <TabsList flex gap-1 pb-6>
                 <TabsTrigger
                   bg-transparent
@@ -60,6 +59,23 @@ export default function Index() {
                 <NewListFolder />
               </TabsContent>
               <TabsContent flex-grow outline-none value="table">
+                <div inline-flex w-full relative left-="1.5">
+                  <span title="Name" w="30%">
+                    <span i-mdi-folder />
+                  </span>
+                  <span title="Subdocuments" w="5%">
+                    <span i-mdi-file pl-10 />
+                  </span>
+                  <span title="Creation Date" w="15%">
+                    <span i-mdi-calendar-range />
+                  </span>
+                  <span title="Last Modified" w="20%">
+                    <span i-mdi-history />
+                  </span>
+                  <span title="List of Tags" w="30%">
+                    <span i-mdi-tag pr-10 />
+                  </span>
+                </div>
                 {data.map((folder, index) => (
                   <div key={index}>
                     <TableFolder folder={folder} />
@@ -71,17 +87,12 @@ export default function Index() {
           </React.Suspense>
         ) : null}
         {isLoading ? (
-          <>
-            <h2>`loading-skeleton`</h2>
-          </>
+          <></>
         ) : null}
         {isFetching && data ? (
-          <>
-            <h2>`update-skeleton`</h2>
-          </>
+          <></>
         ) : null}
       </>
-      <div aria-hidden p-8 />
     </>
   );
 }

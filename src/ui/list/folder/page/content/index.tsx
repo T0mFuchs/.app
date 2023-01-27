@@ -123,6 +123,13 @@ export default function PageContent({
           onChange={(e) =>
             setCurrentContent({ ...currentContent, text: e.target.value })
           }
+          style={{
+            width: `${
+              currentContent && currentContent.text?.length > 3
+                ? currentContent?.text?.length + 1
+                : 4
+            }ch`,
+          }}
           name="text"
           type="text"
         />

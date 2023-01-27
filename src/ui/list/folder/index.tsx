@@ -109,7 +109,7 @@ export default function Index({ folder }: { folder: Folder }) {
               <form onSubmit={onSubmit}>
                 <Label htmlFor="color" />
                 <input
-                  i-mdi-folder-outline
+                  i-mdi-folder
                   relative
                   right="1.5"
                   top="-.5"
@@ -151,6 +151,13 @@ export default function Index({ folder }: { folder: Folder }) {
                       ? currentFolder.name
                       : folder.name
                   }
+                  style={{
+                    width: `${
+                      currentFolder && currentFolder.name?.length > 3
+                        ? currentFolder?.name?.length + 1
+                        : 4
+                    }ch`,
+                  }}
                 />
               </form>
               <span

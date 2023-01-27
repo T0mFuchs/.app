@@ -100,6 +100,13 @@ export default function NewPageContent({
           value={content?.text ?? ""}
           className={content?.elem ? handleElem(content.elem) : ""}
           onChange={(e) => setContent({ ...content, text: e.target.value })}
+          style={{
+            width: `${
+              content && content.text?.length > 3
+                ? content?.text?.length + 1
+                : 4
+            }ch`,
+          }}
           name="text"
           placeholder="..."
           title="add line"

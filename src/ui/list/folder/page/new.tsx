@@ -15,7 +15,10 @@ export default function NewPage({ folder_id }: { folder_id: string }) {
     createFolderPage.mutateAsync({
       folder_id: folder_id,
       title: e.target.title.value,
-      color: e.target.color.value,
+      color:
+        e.target.color.value === "#000000"
+          ? "var(--text)"
+          : e.target.color.value,
     });
     setPage(null);
   };
@@ -40,7 +43,7 @@ export default function NewPage({ folder_id }: { folder_id: string }) {
           outline-none
           type="color"
           name="color"
-          value={page?.color ?? "var(--text)"}
+          value={page?.color ?? "#000000"}
           onChange={(e) => setPage({ ...page, color: e.target.value })}
           style={{
             backgroundColor: page?.color ?? "var(--text)",
@@ -65,6 +68,11 @@ export default function NewPage({ folder_id }: { folder_id: string }) {
           onChange={(e) => setPage({ title: e.target.value })}
           placeholder="..."
           title="add page"
+          style={{
+            width: `${
+              page && page.title?.length > 3 ? page?.title?.length + 1 : 4
+            }ch`,
+          }}
         />
       </form>
     </div>

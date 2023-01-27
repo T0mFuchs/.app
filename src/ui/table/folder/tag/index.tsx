@@ -104,7 +104,11 @@ export default function FolderTag({
         value={currentTag?.name}
         onChange={(e) => setCurrentTag({ ...currentTag, name: e.target.value })}
         style={{
-          width: `${currentTag?.name.length / 1.5}rem`,
+          width: `${
+            currentTag && currentTag.name?.length > 3
+              ? currentTag?.name?.length + 1
+              : 4
+          }ch`,
           backgroundColor: currentTag?.color,
         }}
       />

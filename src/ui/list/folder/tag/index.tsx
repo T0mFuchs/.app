@@ -29,7 +29,11 @@ export default function FolderTag({
       return;
     }
     if (currentTag?.name !== tag.name || currentTag?.color !== tag.color) {
-      updateFolderTag.mutate({ folder_id: folder_id, tag_id: tag._id, tag: updatedTag });
+      updateFolderTag.mutate({
+        folder_id: folder_id,
+        tag_id: tag._id,
+        tag: updatedTag,
+      });
       return;
     }
   };
@@ -91,6 +95,7 @@ export default function FolderTag({
         rounded
         leading-4
         text-base
+        text-center
         bg-transparent
         hover:bg-neutral-800
         focus:bg-neutral-800
@@ -98,7 +103,11 @@ export default function FolderTag({
         value={currentTag?.name}
         onChange={(e) => setCurrentTag({ ...currentTag, name: e.target.value })}
         style={{
-          width: `${currentTag?.name.length / 1.5}rem`,
+          width: `${
+            currentTag && currentTag.name?.length > 3
+              ? currentTag?.name?.length + 1
+              : 4
+          }ch`,
           backgroundColor: currentTag?.color,
         }}
       />

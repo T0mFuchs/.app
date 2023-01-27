@@ -59,7 +59,11 @@ export default function Page({
       currentPage?.title !== page.title ||
       currentPage?.color !== page.color
     ) {
-      updateFolderPage.mutate({ folder_id: folder_id, page_id: page._id, ...updatedPage });
+      updateFolderPage.mutate({
+        folder_id: folder_id,
+        page_id: page._id,
+        ...updatedPage,
+      });
     }
   };
 
@@ -161,6 +165,13 @@ export default function Page({
                       ? currentPage?.title
                       : page?.title
                   }
+                  style={{
+                    width: `${
+                      currentPage && currentPage.title?.length > 3
+                        ? currentPage?.title?.length + 1
+                        : 4
+                    }ch`,
+                  }}
                 />
               </form>
               <span
