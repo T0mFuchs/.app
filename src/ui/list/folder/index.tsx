@@ -3,6 +3,7 @@ import React from "react";
 import * as Accordion from "@radix-ui/react-accordion";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Label } from "@radix-ui/react-label";
+import { Separator } from "@radix-ui/react-separator";
 import { trpc } from "@lib/trpc";
 
 import Page from "./page";

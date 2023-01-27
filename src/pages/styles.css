@@ -1,9 +1,10 @@
 /* for _app.tsx */
 
-:root{ --text: #0e0c0c; --bg: #f0f0efee; --tag: #b3b3b3 }
-
+:root{ --text: #0e0c0c; --bg: #f0f0efee; --tag: #b3b3b3; }
+/* todo replace variables here with dynamic ones via styled-jsx */
+/* https://github.com/vercel/styled-jsx */
 @media(prefers-color-scheme: dark){
-  :root { --text: #faf9efe5; --bg: #131313; --tag: #333333 }
+  :root { --text: #faf9efe5; --bg: #131313; --tag: #333333; }
 }
 
 *{ box-sizing: border-box; margin: 0; }

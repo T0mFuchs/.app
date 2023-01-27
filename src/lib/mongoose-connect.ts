@@ -25,6 +25,8 @@ async function mongooseConnect() {
     mongoose.set("debug", true);
   }
 
+  mongoose.set("strictQuery", true);
+
   if (cached.conn) {
     return cached.conn;
   }
