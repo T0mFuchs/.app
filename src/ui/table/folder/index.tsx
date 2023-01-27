@@ -179,6 +179,7 @@ export default function Index({ folder }: { folder: Folder }) {
           top="-2.5"
           text-base
           leading-4
+          pl-10
         >
           {formatDistance(new Date(folder.eat), Date.now(), {
             includeSeconds: true,

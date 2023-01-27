@@ -132,10 +132,10 @@ export default function Index() {
                             <span i-mdi-file pl-10 />
                           </span>
                           <span title="Creation Date" w="15%">
-                            <span i-mdi-calendar-range />
+                            <span i-mdi-calendar-range pl-10 />
                           </span>
                           <span title="Last Modified" w="20%">
-                            <span i-mdi-history />
+                            <span i-mdi-history pl-20 />
                           </span>
                           <span title="List of Tags" w="30%">
                             <span i-mdi-tag pr-10 />
