@@ -1,23 +1,14 @@
 // @ts-nocheck
 import React from "react";
 import { Label } from "@radix-ui/react-label";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { createOneFolder } from "@/hooks/fetch/folder/createOneFolder";
+import { trpc } from "@lib/trpc";
 
-import type { Folder } from "@/types";
+import type { Folder } from "@types";
 
 export default function New() {
   const [folder, setFolder] = React.useState<Folder>(null);
 
-  const queryClient = useQueryClient();
-  const createMutation = useMutation(
-    (newFolder: Folder) => createOneFolder(newFolder),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["folder"] });
-      },
-    }
-  );
+  const createFolder = trpc.folder.create.useMutation();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +16,8 @@ export default function New() {
       name: e.target.name.value,
       color: e.target.color.value,
     };
-    createMutation.mutate({ ...newFolder });
+    createFolder.mutate({ ...newFolder });
+    setFolder(null);
   };
 
   const ref = React.useRef(null);

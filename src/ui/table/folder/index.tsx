@@ -1,43 +1,22 @@
 // @ts-nocheck
 import React from "react";
-import Link from "next/link";
-import * as Accordion from "@radix-ui/react-accordion";
-import * as AlertDialog from "@radix-ui/react-alert-dialog";
+import * as Dialog from "@radix-ui/react-dialog";
 import { Label } from "@radix-ui/react-label";
-import { formatDistance, formatISO } from "date-fns"
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-
-import { updateOneFolder } from "@/hooks/fetch/folder/updateOneFolder";
-import { deleteOneFolder } from "@/hooks/fetch/folder/deleteOneFolder";
+import { formatDistance, formatISO } from "date-fns";
+import { trpc } from "@lib/trpc";
 
 import FolderTag from "./tag";
 import NewFolderTag from "./tag/new";
 
-import type { Folder } from "@/types";
+import type { Folder } from "@types";
 
 export default function Index({ folder }: { folder: Folder }) {
   const [openWarning, setOpenWarning] = React.useState(false);
   const [openConfirm, setOpenConfirm] = React.useState(false);
   const [currentFolder, setCurrentFolder] = React.useState<Folder>(folder);
 
-  const queryClient = useQueryClient();
-
-  const updateMutation = useMutation(
-    (updatedFolder: Folder) => updateOneFolder(updatedFolder),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["folder"] });
-      },
-    }
-  );
-  const deleteMutation = useMutation(
-    (folder: Folder) => deleteOneFolder(folder),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["folder"] });
-      },
-    }
-  );
+  const updateFolder = trpc.folder.update.useMutation();
+  const deleteFolder = trpc.folder.delete.useMutation();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -60,7 +39,7 @@ export default function Index({ folder }: { folder: Folder }) {
         setTimeout(() => setOpenWarning(false), 5000);
         return;
       } else {
-        deleteMutation.mutate({ ...currentFolder });
+        deleteFolder.mutate({ ...currentFolder });
         setOpenWarning(false);
         return;
       }
@@ -69,21 +48,16 @@ export default function Index({ folder }: { folder: Folder }) {
       currentFolder?.name !== folder.name ||
       currentFolder?.color !== folder.color
     ) {
-      updateMutation.mutate({ ...updatedFolder });
+      updateFolder.mutate({ ...updatedFolder });
     }
   };
 
   return (
     <>
-      <AlertDialog.Root open={openConfirm} onOpenChange={setOpenConfirm}>
-        <AlertDialog.Portal>
-          <AlertDialog.Overlay
-            inset-0
-            fixed
-            bg-neutral="900/95"
-            className="do"
-          />
-          <AlertDialog.Content
+      <Dialog.Root open={openConfirm} onOpenChange={setOpenConfirm}>
+        <Dialog.Portal>
+          <Dialog.Overlay inset-0 fixed bg-neutral="900/95" className="do" />
+          <Dialog.Content
             fixed
             top="1/2"
             left="1/2"
@@ -109,9 +83,9 @@ export default function Index({ folder }: { folder: Folder }) {
             >
               confirm deletion
             </button>
-          </AlertDialog.Content>
-        </AlertDialog.Portal>
-      </AlertDialog.Root>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
       {openWarning ? (
         <div text-red font-700 animate-pulse leading-4 text-sm pb-1>
           {"<!> "}this folder is <span underline>not</span> empty{" <!>"}
@@ -165,14 +139,41 @@ export default function Index({ folder }: { folder: Folder }) {
             }
           />
         </form>
-        <span title="sub pages" inline-flex relative top="-2.25" pl-4 pr-1 text-base leading-4>
+        <span
+          title="sub pages"
+          inline-flex
+          relative
+          top="-2.25"
+          pl-4
+          pr-1
+          text-base
+          leading-4
+        >
           {folder.pages?.length ?? 0}
         </span>
-        <span title="creation date" inline-flex relative top="-2.5" px-2 text-base leading-4>
+        <span
+          title="creation date"
+          inline-flex
+          relative
+          top="-2.5"
+          px-2
+          text-base
+          leading-4
+        >
           {formatISO(new Date(folder.iat), { representation: "date" })}
         </span>
-        <span title="last edited" inline-flex relative top="-2.5" text-base leading-4>
-          {formatDistance(new Date(folder.eat), Date.now(), { includeSeconds: true, addSuffix: true  })}
+        <span
+          title="last edited"
+          inline-flex
+          relative
+          top="-2.5"
+          text-base
+          leading-4
+        >
+          {formatDistance(new Date(folder.eat), Date.now(), {
+            includeSeconds: true,
+            addSuffix: true,
+          })}
         </span>
         <span inline-flex>
           {folder.tags?.map((tag, index) => (

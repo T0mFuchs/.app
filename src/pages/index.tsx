@@ -2,29 +2,24 @@
 import React from "react";
 import Head from "next/head";
 import dynamic from "next/dynamic";
-import { useQuery } from "@tanstack/react-query";
+import { trpc } from "@lib/trpc";
 
-import { fetcher } from "@/lib/fetcher";
-
-import type { Folder } from "@/types";
-
-const TabsRoot = dynamic(() => import("@/ui/lazy-export/radix-ui/tabs/root"));
-const TabsList = dynamic(() => import("@/ui/lazy-export/radix-ui/tabs/list"));
+const TabsRoot = dynamic(() => import("@ui/lazy-export/radix-ui/tabs/root"));
+const TabsList = dynamic(() => import("@ui/lazy-export/radix-ui/tabs/list"));
 const TabsTrigger = dynamic(
-  () => import("@/ui/lazy-export/radix-ui/tabs/trigger")
+  () => import("@ui/lazy-export/radix-ui/tabs/trigger")
 );
 const TabsContent = dynamic(
-  () => import("@/ui/lazy-export/radix-ui/tabs/content")
+  () => import("@ui/lazy-export/radix-ui/tabs/content")
 );
-const ListFolder = dynamic(() => import("@/ui/list/folder"));
-const NewListFolder = dynamic(() => import("@/ui/list/folder/new"));
-const TableFolder = dynamic(() => import("@/ui/table/folder"));
-const NewTableFolder = dynamic(() => import("@/ui/table/folder/new"));
+const ListFolder = dynamic(() => import("@ui/list/folder"));
+const NewListFolder = dynamic(() => import("@ui/list/folder/new"));
+const TableFolder = dynamic(() => import("@ui/table/folder"));
+const NewTableFolder = dynamic(() => import("@ui/table/folder/new"));
 
 export default function Index() {
-  const { data, isLoading, isFetching } = useQuery<[Folder]>(["folder"], () =>
-    fetcher("/api/folder/find-all-and-populate-pages", "GET")
-  );
+  const { data, isLoading, isFetching } = trpc.folder.find.useQuery({});
+  console.log(data);
   return (
     <>
       <Head>

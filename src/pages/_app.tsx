@@ -1,12 +1,13 @@
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { trpc } from "@lib/trpc";
 import type { AppProps } from "next/app";
-import "@/styles/globals.css";
+import "./styles.css";
 import "uno.css";
 
 const queryClient = new QueryClient();
 
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
   return (
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
@@ -15,3 +16,5 @@ export default function App({ Component, pageProps }: AppProps) {
     </React.StrictMode>
   );
 }
+
+export default trpc.withTRPC(App);

@@ -1,10 +1,9 @@
 // @ts-nocheck
 import React from "react";
 import { Label } from "@radix-ui/react-label";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { createPageContent } from "@/hooks/fetch/page/content/createPageContent";
+import { trpc } from "@lib/trpc";
 
-import type { PageContent as PageContentType } from "@/types";
+import type { PageContent as PageContentType } from "@types";
 
 const handleElem = (elem: string) => {
   if (elem === "h1") return "m-2 font-900 text-size-5 leading-7";
@@ -26,19 +25,7 @@ export default function NewPageContent({
 }) {
   const [content, setContent] = React.useState<PageContentType>(null);
 
-  const queryClient = useQueryClient();
-  const createMutation = useMutation(
-    (newContent: PageContentType) => {
-      createPageContent(newContent, folder_id, page_id);
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: ["folder"],
-        });
-      },
-    }
-  );
+  const createFolderPageContent = trpc.folderPagesContent.create.useMutation();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -46,7 +33,11 @@ export default function NewPageContent({
       elem: e.target.elem.value,
       text: e.target.text.value,
     };
-    createMutation.mutate({ ...newContent });
+    createFolderPageContent.mutate({
+      folder_id: folder_id,
+      page_id: page_id,
+      content: newContent,
+    });
     setContent(null);
   };
 

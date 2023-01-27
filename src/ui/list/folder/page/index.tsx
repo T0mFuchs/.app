@@ -1,21 +1,17 @@
 // @ts-nocheck
 import React from "react";
-import Link from "next/link";
 import * as Accordion from "@radix-ui/react-accordion";
-import * as AlertDialog from "@radix-ui/react-alert-dialog";
+import * as Dialog from "@radix-ui/react-dialog";
 import { Label } from "@radix-ui/react-label";
 
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-
-import { updateOnePage } from "@/hooks/fetch/page/updateOnePage";
-import { deleteOnePage } from "@/hooks/fetch/page/deleteOnePage";
+import { trpc } from "@lib/trpc";
 
 import PageTag from "./tag";
 import NewPageTag from "./tag/new";
 import PageContent from "./content";
 import NewPageContent from "./content/new";
 
-import type { Page } from "@/types";
+import type { Page } from "@types";
 
 export default function Page({
   page,
@@ -28,26 +24,8 @@ export default function Page({
   const [openConfirm, setOpenConfirm] = React.useState(false);
   const [currentPage, setCurrentPage] = React.useState<Page>(page);
 
-  const queryClient = useQueryClient();
-
-  const updateMutation = useMutation(
-    (updatedPage: Page) =>
-      updateOnePage(updatedPage, folder_id, currentPage._id),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["folder"] });
-      },
-    }
-  );
-
-  const deleteMutation = useMutation(
-    (page: Page) => deleteOnePage(page, folder_id, currentPage._id),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["folder"] });
-      },
-    }
-  );
+  const updateFolderPage = trpc.folderPages.update.useMutation();
+  const deleteFolderPage = trpc.folderPages.delete.useMutation();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -69,7 +47,10 @@ export default function Page({
         setOpenWarning(true);
         return;
       } else {
-        deleteMutation.mutate({ ...currentPage });
+        deleteFolderPage.mutate({
+          folder_id: folder_id,
+          page_id: page._id,
+        });
         setOpenWarning(false);
         return;
       }
@@ -78,21 +59,16 @@ export default function Page({
       currentPage?.title !== page.title ||
       currentPage?.color !== page.color
     ) {
-      updateMutation.mutate({ ...updatedPage });
+      updateFolderPage.mutate({ folder_id: folder_id, page_id: page._id, ...updatedPage });
     }
   };
 
   return (
     <>
-      <AlertDialog.Root open={openConfirm} onOpenChange={setOpenConfirm}>
-        <AlertDialog.Portal>
-          <AlertDialog.Overlay
-            inset-0
-            fixed
-            bg-neutral="900/95"
-            className="do"
-          />
-          <AlertDialog.Content
+      <Dialog.Root open={openConfirm} onOpenChange={setOpenConfirm}>
+        <Dialog.Portal>
+          <Dialog.Overlay inset-0 fixed bg-neutral="900/95" className="do" />
+          <Dialog.Content
             fixed
             top="1/2"
             left="1/2"
@@ -111,16 +87,19 @@ export default function Page({
               font-700
               outline-none
               onClick={() => {
-                deleteMutation.mutate({ ...currentPage });
+                deleteFolderPage.mutate({
+                  folder_id: folder_id,
+                  page_id: currentPage._id,
+                });
                 setOpenConfirm(false);
                 setOpenWarning(false);
               }}
             >
               confirm deletion
             </button>
-          </AlertDialog.Content>
-        </AlertDialog.Portal>
-      </AlertDialog.Root>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
       <Accordion.Root type="multiple" key={page._id}>
         <Accordion.Item value={`item-page-${page._id}`}>
           <Accordion.Header>

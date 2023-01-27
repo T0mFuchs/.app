@@ -1,45 +1,24 @@
 // @ts-nocheck
 import React from "react";
-import Link from "next/link";
 import * as Accordion from "@radix-ui/react-accordion";
-import * as AlertDialog from "@radix-ui/react-alert-dialog";
+import * as Dialog from "@radix-ui/react-dialog";
 import { Label } from "@radix-ui/react-label";
-
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-
-import { updateOneFolder } from "@/hooks/fetch/folder/updateOneFolder";
-import { deleteOneFolder } from "@/hooks/fetch/folder/deleteOneFolder";
+import { trpc } from "@lib/trpc";
 
 import Page from "./page";
 import NewPage from "./page/new";
 import FolderTag from "./tag";
 import NewFolderTag from "./tag/new";
 
-import type { Folder } from "@/types";
+import type { Folder } from "@types";
 
 export default function Index({ folder }: { folder: Folder }) {
   const [openWarning, setOpenWarning] = React.useState(false);
   const [openConfirm, setOpenConfirm] = React.useState(false);
   const [currentFolder, setCurrentFolder] = React.useState<Folder>(folder);
 
-  const queryClient = useQueryClient();
-
-  const updateMutation = useMutation(
-    (updatedFolder: Folder) => updateOneFolder(updatedFolder),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["folder"] });
-      },
-    }
-  );
-  const deleteMutation = useMutation(
-    (folder: Folder) => deleteOneFolder(folder),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["folder"] });
-      },
-    }
-  );
+  const updateMutation = trpc.folder.update.useMutation();
+  const deleteMutation = trpc.folder.delete.useMutation();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -51,7 +30,6 @@ export default function Index({ folder }: { folder: Folder }) {
       pages: currentFolder?.pages,
       iat: currentFolder?.iat,
     };
-
     if (updatedFolder.name === "") {
       if (updatedFolder.pages?.length > 0 && openWarning) {
         setOpenConfirm(true);
@@ -77,15 +55,10 @@ export default function Index({ folder }: { folder: Folder }) {
 
   return (
     <>
-      <AlertDialog.Root open={openConfirm} onOpenChange={setOpenConfirm}>
-        <AlertDialog.Portal>
-          <AlertDialog.Overlay
-            inset-0
-            fixed
-            bg-neutral="900/95"
-            className="do"
-          />
-          <AlertDialog.Content
+      <Dialog.Root open={openConfirm} onOpenChange={setOpenConfirm}>
+        <Dialog.Portal>
+          <Dialog.Overlay inset-0 fixed bg-neutral="900/95" className="do" />
+          <Dialog.Content
             fixed
             top="1/2"
             left="1/2"
@@ -111,9 +84,9 @@ export default function Index({ folder }: { folder: Folder }) {
             >
               confirm deletion
             </button>
-          </AlertDialog.Content>
-        </AlertDialog.Portal>
-      </AlertDialog.Root>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
       <Accordion.Root type="multiple">
         <Accordion.Item value={`item-folder-${folder?._id}`}>
           <Accordion.Header>
@@ -210,11 +183,7 @@ export default function Index({ folder }: { folder: Folder }) {
                   relative
                   left-3
                 >
-                  <Page
-                    page={page}
-                    index={index}
-                    folder_id={folder._id as string}
-                  />
+                  <Page page={page} folder_id={folder._id as string} />
                 </Accordion.Content>
               ))}
             </>

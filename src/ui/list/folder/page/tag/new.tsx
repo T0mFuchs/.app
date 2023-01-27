@@ -1,11 +1,9 @@
 // @ts-nocheck
 import React from "react";
 import { Label } from "@radix-ui/react-label";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { trpc } from "@lib/trpc";
 
-import { createPageTag } from "@/hooks/fetch/page/tag/createPageTag";
-
-import type { Tag as PageTag } from "@/types";
+import type { Tag as PageTag } from "@types";
 
 export default function Content({
   folder_id,
@@ -16,16 +14,7 @@ export default function Content({
 }) {
   const [tag, setTag] = React.useState<PageTag>(null);
 
-  const queryClient = useQueryClient();
-
-  const createMutation = useMutation(
-    (tag) => createPageTag(tag, folder_id, page_id),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["folder"] });
-      },
-    }
-  );
+  const createFolderPageTag = trpc.folderPagesTags.create.useMutation();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -33,7 +22,11 @@ export default function Content({
       name: e.target.name.value,
       color: e.target.color.value,
     };
-    createMutation.mutate({ ...updatedTag });
+    createFolderPageTag.mutate({
+      folder_id: folder_id,
+      page_id: page_id,
+      tag: updatedTag,
+    });
     setTag(null);
   };
 

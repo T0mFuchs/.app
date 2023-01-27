@@ -1,12 +1,9 @@
 // @ts-nocheck
 import React from "react";
 import { Label } from "@radix-ui/react-label";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { trpc } from "@lib/trpc";
 
-import { updatePageTag } from "@/hooks/fetch/page/tag/updatePageTag";
-import { deletePageTag } from "@/hooks/fetch/page/tag/deletePageTag";
-
-import type { Tag as PageTag } from "@/types";
+import type { Tag as PageTag } from "@types";
 
 export default function PageTag({
   tag,
@@ -19,26 +16,8 @@ export default function PageTag({
 }) {
   const [currentTag, setCurrentTag] = React.useState<PageTag>(tag);
 
-  const queryClient = useQueryClient();
-
-  const updateMutation = useMutation(
-    (updatedTag) =>
-      updatePageTag(updatedTag, folder_id, page_id, currentTag._id),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["folder"] });
-      },
-    }
-  );
-
-  const deleteMutation = useMutation(
-    (tag) => deletePageTag(tag, folder_id, page_id, currentTag._id),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["folder"] });
-      },
-    }
-  );
+  const updateFolderPageTag = trpc.folderPagesTags.update.useMutation();
+  const deleteFolderPageTag = trpc.folderPagesTags.delete.useMutation();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -47,11 +26,20 @@ export default function PageTag({
       color: e.target.color.value,
     };
     if (updatedTag.name === "") {
-      deleteMutation.mutate({ ...currentTag });
+      deleteFolderPageTag.mutate({
+        folder_id: folder_id,
+        page_id: page_id,
+        tag_id: tag._id,
+      });
       return;
     }
     if (currentTag?.name !== tag.name || currentTag?.color !== tag.color) {
-      updateMutation.mutate({ ...updatedTag });
+      updateFolderPageTag.mutate({
+        folder_id: folder_id,
+        page_id: page_id,
+        tag_id: tag._id,
+        tag: updatedTag,
+      });
       return;
     }
   };

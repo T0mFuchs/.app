@@ -2,10 +2,7 @@
 import React from "react";
 import { Label } from "@radix-ui/react-label";
 import { Separator } from "@radix-ui/react-separator";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-
-import { updatePageContent } from "@/hooks/fetch/page/content/updatePageContent";
-import { deletePageContent } from "@/hooks/fetch/page/content/deletePageContent";
+import { trpc } from "@lib/trpc";
 
 import type { PageContent as PageContentType } from "@/types";
 
@@ -32,27 +29,9 @@ export default function PageContent({
   const [currentContent, setCurrentContent] =
     React.useState<PageContentType>(content);
 
-  const queryClient = useQueryClient();
+  const updateFolderPageContent = trpc.folderPagesContent.update.useMutation();
 
-  const updateMutation = useMutation(
-    (updatedContent: PageContentType) =>
-      updatePageContent(updatedContent, folder_id, page_id, currentContent._id),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["folder"] });
-      },
-    }
-  );
-
-  const deleteMutation = useMutation(
-    (content: PageContentType) =>
-      deletePageContent(content, folder_id, page_id, currentContent._id),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["folder"] });
-      },
-    }
-  );
+  const deleteFolderPageContent = trpc.folderPagesContent.delete.useMutation();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -61,19 +40,26 @@ export default function PageContent({
       text: e.target.text.value,
     };
     if (updatedContent.text === "") {
-      deleteMutation.mutate({ ...currentContent });
+      deleteFolderPageContent.mutate({
+        folder_id: folder_id,
+        page_id: page_id,
+        content_id: content._id,
+      });
       return;
     }
     if (
       currentContent?.text !== content.text ||
       currentContent?.elem !== content.elem
     ) {
-      updateMutation.mutate({ ...updatedContent });
+      updateFolderPageContent.mutate({
+        folder_id: folder_id,
+        page_id: page_id,
+        content_id: content._id,
+        content: updatedContent,
+      });
       return;
     }
   };
-
-  //! todo: add select field but make them opacity 0 and only set them to 1 on hover & focus
 
   return (
     <>

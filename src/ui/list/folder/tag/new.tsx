@@ -1,30 +1,23 @@
 // @ts-nocheck
 import React from "react";
 import { Label } from "@radix-ui/react-label";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { useOnClickOutside } from "@/hooks/useOnClickOutside";
-import { createFolderTag } from "@/hooks/fetch/folder/tag/createFolderTag";
+import { trpc } from "@lib/trpc";
+import { useOnClickOutside } from "@hooks/useOnClickOutside";
 
-import type { Tag as FolderTag } from "@/types";
+import type { Tag as FolderTag } from "@types";
 
-export default function Content({ folder_id }: { folder_id?: string }) {
+export default function Content({ folder_id }: { folder_id: string }) {
   const [tag, setTag] = React.useState<FolderTag>(null);
 
-  const queryClient = useQueryClient();
-
-  const createMutation = useMutation((tag) => createFolderTag(tag, folder_id), {
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["folder"] });
-    },
-  });
-
+  const createFolderTag = trpc.folderTags.create.useMutation();
   const onSubmit = async (e) => {
     e.preventDefault();
     const updatedTag: FolderTag = {
       name: e.target.name.value,
       color: e.target.color.value,
     };
-    createMutation.mutate({ ...updatedTag });
+    createFolderTag.mutateAsync({ folder_id: folder_id, tag: updatedTag });
+    setTag(null);
   };
 
   const colorRef = React.useRef(null);

@@ -1,30 +1,22 @@
 // @ts-nocheck
 import React from "react";
 import { Label } from "@radix-ui/react-label";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { createOnePage } from "@/hooks/fetch/page/createOnePage";
-import type { Page } from "@/types";
+import { trpc } from "@lib/trpc";
+
+import type { Page } from "@types";
 
 export default function NewPage({ folder_id }: { folder_id: string }) {
   const [page, setPage] = React.useState<Page>(null);
 
-  const queryClient = useQueryClient();
-  const createMutation = useMutation(
-    (newPage: Page) => createOnePage(newPage, folder_id),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["folder"] });
-      },
-    }
-  );
+  const createFolderPage = trpc.folderPages.create.useMutation();
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const newPage: Page = {
+    createFolderPage.mutateAsync({
+      folder_id: folder_id,
       title: e.target.title.value,
       color: e.target.color.value,
-    };
-    createMutation.mutate({ ...newPage });
+    });
     setPage(null);
   };
 

@@ -1,12 +1,10 @@
 // @ts-nocheck
 import React from "react";
 import { Label } from "@radix-ui/react-label";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { useOnClickOutside } from "@/hooks/useOnClickOutside";
-import { updateFolderTag } from "@/hooks/fetch/folder/tag/updateFolderTag";
-import { deleteFolderTag } from "@/hooks/fetch/folder/tag/deleteFolderTag";
+import { useOnClickOutside } from "@hooks/useOnClickOutside";
+import { trpc } from "@lib/trpc";
 
-import type { Tag as FolderTag } from "@/types";
+import type { Tag as FolderTag } from "@types";
 
 export default function FolderTag({
   tag,
@@ -17,25 +15,8 @@ export default function FolderTag({
 }) {
   const [currentTag, setCurrentTag] = React.useState<FolderTag>(tag);
 
-  const queryClient = useQueryClient();
-
-  const updateMutation = useMutation(
-    (updatedTag) => updateFolderTag(updatedTag, folder_id, currentTag._id),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["folder"] });
-      },
-    }
-  );
-
-  const deleteMutation = useMutation(
-    (tag) => deleteFolderTag(tag, folder_id, currentTag._id),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["folder"] });
-      },
-    }
-  );
+  const updateFolderTag = trpc.folderTags.update.useMutation();
+  const deleteFolderTag = trpc.folderTags.delete.useMutation();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -44,11 +25,15 @@ export default function FolderTag({
       color: e.target.color.value,
     };
     if (updatedTag.name === "") {
-      deleteMutation.mutate({ ...currentTag });
+      deleteFolderTag.mutate({ folder_id: folder_id, tag_id: tag._id });
       return;
     }
     if (currentTag?.name !== tag.name || currentTag?.color !== tag.color) {
-      updateMutation.mutate({ ...updatedTag });
+      updateFolderTag.mutate({
+        folder_id: folder_id,
+        tag_id: tag._id,
+        ...updatedTag,
+      });
       return;
     }
   };
@@ -67,7 +52,8 @@ export default function FolderTag({
     <form
       pt-1
       pl="2.5"
-      relative top--2
+      relative
+      top--2
       onSubmit={onSubmit}
       onMouseEnter={mouseEnter}
       onMouseDown={mouseEnter}
