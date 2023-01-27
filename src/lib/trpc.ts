@@ -6,9 +6,13 @@ import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "@api/routers/_app";
 
 function getBaseUrl() {
-  return process.env.BASE_URL
-    ? `https://${process.env.BASE_URL}`
-    : `http://localhost:4000`;
+  if (typeof window !== "undefined") {
+    return "";
+  }
+  if (process.env.BASE_URL) {
+    return `https://${process.env.BASE_URL}`;
+  }
+  return "http://localhost:4000";
 }
 
 export const trpc = createTRPCNext<AppRouter>({
