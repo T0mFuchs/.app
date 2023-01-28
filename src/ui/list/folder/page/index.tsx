@@ -3,7 +3,7 @@ import React from "react";
 import * as Accordion from "@radix-ui/react-accordion";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Label } from "@radix-ui/react-label";
-
+import { PageContext } from "@context/page";
 import { trpc } from "@lib/trpc";
 
 import PageTag from "./tag";
@@ -26,6 +26,12 @@ export default function Page({
 
   const updateFolderPage = trpc.folderPages.update.useMutation();
   const deleteFolderPage = trpc.folderPages.delete.useMutation();
+  const {
+    page: pageContext,
+    setPage: setPageContext,
+    folder: folderContext,
+    setFolder: setFolderContext,
+  } = React.useContext(PageContext);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -186,6 +192,15 @@ export default function Page({
                 duration-300
               />
             </Accordion.Trigger>
+            <button
+              relative
+              i-mdi-file-edit
+              style={{ backgroundColor: "var(--text)" }}
+              onClick={() => {
+                setPageContext(currentPage);
+                setFolderContext({ _id: folder_id });
+              }}
+            />
           </Accordion.Header>
           <span inline-flex>
             {page.tags?.map((tag, index) => (
