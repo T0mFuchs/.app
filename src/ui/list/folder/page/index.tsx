@@ -3,7 +3,6 @@ import React from "react";
 import * as Accordion from "@radix-ui/react-accordion";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Label } from "@radix-ui/react-label";
-import { Separator } from "@radix-ui/react-separator";
 
 import { trpc } from "@lib/trpc";
 
@@ -117,13 +116,12 @@ export default function Page({
               border-0
               bg-transparent
               border-b-1
-              style={{ borderColor: "var(--text)" }}
               rounded-t
               hover:animate-pulse
               focus:animate-pulse
               outline-none
               inline-flex
-              shadow-lg
+              shadow-xl
               className="hover:shadow-neutral-800/30 focus:shadow-neutral-800/30 at"
             >
               <form onSubmit={onSubmit}>

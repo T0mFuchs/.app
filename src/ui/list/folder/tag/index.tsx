@@ -50,7 +50,6 @@ export default function FolderTag({
 
   return (
     <form
-      pt-1
       ref={formRef}
       onSubmit={onSubmit}
       onMouseEnter={mouseEnter}

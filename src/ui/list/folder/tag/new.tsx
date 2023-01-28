@@ -35,7 +35,6 @@ export default function Content({ folder_id }: { folder_id: string }) {
 
   return (
     <form
-      pt-1
       onSubmit={onSubmit}
       onMouseEnter={mouseEnter}
       onMouseDown={mouseEnter}

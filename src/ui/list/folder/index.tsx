@@ -175,9 +175,9 @@ export default function Index({ folder }: { folder: Folder }) {
           </Accordion.Header>
           <span inline-flex>
             {folder.tags?.map((tag, index) => (
-              <div key={index}>
+              <span pl-2 key={index}>
                 <FolderTag tag={tag} folder_id={folder._id as string} />
-              </div>
+              </span>
             ))}
             <NewFolderTag folder_id={folder._id as string} />
           </span>

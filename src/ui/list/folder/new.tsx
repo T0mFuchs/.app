@@ -32,13 +32,7 @@ export default function New() {
   };
 
   return (
-    <div
-      inline-flex
-      relative
-      left-1
-      onMouseEnter={mouseEnter}
-      onMouseLeave={mouseLeave}
-    >
+    <div relative left-1 onMouseEnter={mouseEnter} onMouseLeave={mouseLeave}>
       <form pt-1 onSubmit={onSubmit}>
         <Label htmlFor="color" />
         <input

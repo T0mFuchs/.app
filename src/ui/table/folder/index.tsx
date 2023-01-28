@@ -2,13 +2,14 @@
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Label } from "@radix-ui/react-label";
-import { formatDistance, formatISO } from "date-fns";
+import { formatDistance, format } from "date-fns";
 import { trpc } from "@lib/trpc";
 
 import FolderTag from "./tag";
 import NewFolderTag from "./tag/new";
 
 import type { Folder } from "@types";
+import { Separator } from "@radix-ui/react-separator";
 
 export default function Index({ folder }: { folder: Folder }) {
   const [openWarning, setOpenWarning] = React.useState(false);
@@ -91,14 +92,14 @@ export default function Index({ folder }: { folder: Folder }) {
           {"<!> "}this folder is <span underline>not</span> empty{" <!>"}
         </div>
       ) : null}
-      <div w-full>
+      <div flex>
         <form onSubmit={onSubmit} inline-flex w="30%">
           <Label htmlFor="color" />
           <input
             i-mdi-folder
             relative
-            right="1.5"
-            top-2
+            top="3.5"
+            left--1
             outline-none
             type="color"
             name="color"
@@ -146,55 +147,35 @@ export default function Index({ folder }: { folder: Folder }) {
             }}
           />
         </form>
-        <span
-          w="5%"
-          title="sub pages"
-          inline-flex
-          relative
-          top="-2.25"
-          pl-4
-          pr-1
-          text-base
-          leading-4
-        >
+        <Separator orientation="vertical" w="1px" bg-neutral-800 />
+        <span w="5%" title="sub pages" text-end text-base leading-4 p-1 px-2>
           {folder.pages?.length ?? 0}
         </span>
-        <span
-          w="15%"
-          title="creation date"
-          inline-flex
-          relative
-          top="-2.5"
-          px-2
-          text-base
-          leading-4
-        >
-          {formatISO(new Date(folder.iat), { representation: "date" })}
+        <Separator orientation="vertical" w="1px" bg-neutral-800 />
+
+        <span w="15%" title="creation date" text-end text-base leading-4 p-1>
+          {format(new Date(folder.iat), "dd / MM / yyyy")}
         </span>
-        <span
-          w="20%"
-          title="last edited"
-          inline-flex
-          relative
-          top="-2.5"
-          text-base
-          leading-4
-          pl-10
-        >
+        <Separator orientation="vertical" w="1px" bg-neutral-800 />
+
+        <span w="20%" title="last edited" text-end text-base leading-4 p-1>
           {formatDistance(new Date(folder.eat), Date.now(), {
             includeSeconds: true,
             addSuffix: true,
           })}
         </span>
-        <span inline-flex w="30%">
+        <Separator orientation="vertical" w="1px" bg-neutral-800 />
+
+        <span inline-flex relative top="1.5" w="30%">
           {folder.tags?.map((tag, index) => (
-            <div key={index}>
+            <span key={index}>
               <FolderTag tag={tag} folder_id={folder._id as string} />
-            </div>
+            </span>
           ))}
           <NewFolderTag folder_id={folder._id as string} />
         </span>
       </div>
+      <Separator w-full h="1px" bg-neutral-800 relative />
     </>
   );
 }

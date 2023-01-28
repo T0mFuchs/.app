@@ -6,7 +6,7 @@ import { trpc } from "@lib/trpc";
 import { Separator } from "@radix-ui/react-separator";
 
 const loadFeatures = () =>
-  import("@features/framer-motion/full").then((res) => res.default);
+  import("@features/framer-motion/domMax").then((res) => res.default);
 
 const TabsRoot = dynamic(() => import("@ui/lazy-export/radix-ui/tabs/root"));
 const TabsList = dynamic(() => import("@ui/lazy-export/radix-ui/tabs/list"));
@@ -36,7 +36,7 @@ export default function Index() {
       <Head>
         <title></title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="take notes" />
+        <meta name="description" content="" />
       </Head>
       <>
         {data ? (
@@ -54,7 +54,7 @@ export default function Index() {
                 >
                   <span i-mdi-format-list-bulleted />
                 </TabsTrigger>
-                <Separator h-6 w="1px" bg-neutral-800 relative />
+                <Separator orientation="vertical" h-6 w="1px" bg-neutral-800 />
                 <TabsTrigger
                   className="tatr"
                   bg-transparent
@@ -124,23 +124,25 @@ export default function Index() {
                         animate="animate"
                         exit="exit"
                       >
-                        <div inline-flex w-full relative left-="1.5">
+                        <div inline-flex w-full relative left-="1.5" pb-2>
                           <span title="Name" w="30%">
                             <span i-mdi-folder />
                           </span>
+                          <span aria-hidden px-1 />
                           <span title="Subdocuments" w="5%">
-                            <span i-mdi-file pl-10 />
+                            <span i-mdi-file />
                           </span>
                           <span title="Creation Date" w="15%">
-                            <span i-mdi-calendar-range pl-10 />
+                            <span i-mdi-calendar-range />
                           </span>
                           <span title="Last Modified" w="20%">
-                            <span i-mdi-history pl-20 />
+                            <span i-mdi-history />
                           </span>
                           <span title="List of Tags" w="30%">
-                            <span i-mdi-tag pr-10 />
+                            <span i-mdi-tag />
                           </span>
                         </div>
+                        <Separator w-full h="1px" bg-neutral-800 relative />
                         {data.map((folder, index) => (
                           <div key={index}>
                             <TableFolder folder={folder} />
