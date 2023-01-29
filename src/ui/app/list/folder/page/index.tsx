@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React from "react";
 import * as Accordion from "@radix-ui/react-accordion";
+import * as ContextMenu from "@radix-ui/react-context-menu";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Label } from "@radix-ui/react-label";
 import { PageContext } from "@context/page";
@@ -118,104 +119,124 @@ export default function Page({
                 {"<!> "}this page is <span underline>not</span> empty{" <!>"}
               </div>
             ) : null}
-            <Accordion.Trigger
-              border-0
-              bg-transparent
-              border-b-1
-              rounded-t
-              hover:animate-pulse
-              focus:animate-pulse
-              outline-none
-              inline-flex
-              shadow-xl
-              className="hover:shadow-neutral-800/30 focus:shadow-neutral-800/30 at"
-            >
-              <form onSubmit={onSubmit}>
-                <Label htmlFor="color" />
-                <input
-                  i-mdi-file
-                  relative
-                  right="1.5"
-                  top="-.5"
-                  outline-none
-                  type="color"
-                  name="color"
-                  value={currentPage?.color ?? "var(--text)"}
-                  onChange={(e) =>
-                    setCurrentPage({ ...currentPage, color: e.target.value })
-                  }
-                  style={{
-                    backgroundColor: currentPage?.color ?? "var(--text)",
-                  }}
-                />
-                <Label htmlFor="title" />
-                <input
-                  type="text"
-                  name="title"
-                  p-1
+            <ContextMenu.Root modal={false}>
+              <ContextMenu.Trigger>
+                <Accordion.Trigger
                   border-0
-                  rounded
-                  leading-4
-                  text-base
                   bg-transparent
-                  hover:bg-neutral-800
-                  focus:bg-neutral-800
+                  border-b-1
+                  rounded-t
+                  hover:animate-pulse
+                  focus:animate-pulse
                   outline-none
-                  onChange={(e) =>
-                    setCurrentPage({
-                      ...currentPage,
-                      title: e.target.value,
-                    })
-                  }
-                  value={
-                    currentPage && currentPage._id === page?._id
-                      ? currentPage?.title
-                      : page?.title
-                  }
-                  style={{
-                    width: `${
-                      currentPage && currentPage.title?.length > 3
-                        ? currentPage?.title?.length + 1
-                        : 4
-                    }ch`,
-                  }}
+                  inline-flex
+                  shadow-xl
+                  className="hover:shadow-neutral-800/30 focus:shadow-neutral-800/30 at"
+                  id={`p${currentPage?._id}`}
+                >
+                  <form onSubmit={onSubmit}>
+                    <Label htmlFor="color" />
+                    <input
+                      i-mdi-file
+                      relative
+                      right="1.5"
+                      top="-.5"
+                      outline-none
+                      type="color"
+                      name="color"
+                      value={currentPage?.color ?? "var(--text)"}
+                      onChange={(e) =>
+                        setCurrentPage({
+                          ...currentPage,
+                          color: e.target.value,
+                        })
+                      }
+                      style={{
+                        backgroundColor: currentPage?.color ?? "var(--text)",
+                      }}
+                    />
+                    <Label htmlFor="title" />
+                    <input
+                      type="text"
+                      name="title"
+                      p-1
+                      border-0
+                      rounded
+                      leading-4
+                      text-base
+                      bg-transparent
+                      hover:bg-neutral-800
+                      focus:bg-neutral-800
+                      outline-none
+                      onChange={(e) =>
+                        setCurrentPage({
+                          ...currentPage,
+                          title: e.target.value,
+                        })
+                      }
+                      value={
+                        currentPage && currentPage._id === page?._id
+                          ? currentPage?.title
+                          : page?.title
+                      }
+                      style={{
+                        width: `${
+                          currentPage && currentPage.title?.length > 3
+                            ? currentPage?.title?.length + 1
+                            : 4
+                        }ch`,
+                      }}
+                    />
+                  </form>
+                  <span
+                    i-mdi-chevron-down
+                    className="i"
+                    relative
+                    top="1.5"
+                    left-1
+                    transform-gpu
+                    transition-transform
+                    duration-300
+                  />
+                </Accordion.Trigger>
+              </ContextMenu.Trigger>
+              <ContextMenu.Content
+                alignOffset={10}
+                rounded-md
+                bg-dark="600/95"
+                w-16
+                text-center
+                shadow-lg
+              >
+                <ContextMenu.Item>
+                  <button
+                    relative
+                    i-mdi-file-edit
+                    title="open in separated"
+                    style={{ backgroundColor: "var(--text)" }}
+                    onClick={() => {
+                      setPageContext(currentPage);
+                      setFolderContext({ _id: folder_id });
+                    }}
+                  />
+                </ContextMenu.Item>
+              </ContextMenu.Content>
+            </ContextMenu.Root>
+            <span inline-flex>
+              {page.tags?.map((tag, index) => (
+                <PageTag
+                  tag={tag}
+                  key={index}
+                  folder_id={folder_id as string}
+                  page_id={page._id as string}
                 />
-              </form>
-              <span
-                i-mdi-chevron-down
-                className="i"
-                relative
-                top="1.5"
-                left-1
-                transform-gpu
-                transition-transform
-                duration-300
-              />
-            </Accordion.Trigger>
-            <button
-              relative
-              i-mdi-file-edit
-              style={{ backgroundColor: "var(--text)" }}
-              onClick={() => {
-                setPageContext(currentPage);
-                setFolderContext({ _id: folder_id });
-              }}
-            />
-          </Accordion.Header>
-          <span inline-flex>
-            {page.tags?.map((tag, index) => (
-              <PageTag
-                tag={tag}
-                key={index}
+              ))}
+              <NewPageTag
                 folder_id={folder_id as string}
                 page_id={page._id as string}
               />
-            ))}
-            <NewPageTag
-              folder_id={folder_id as string}
-              page_id={page._id as string}
-            />
-          </span>
+            </span>
+          </Accordion.Header>
           <div aria-hidden p-1 />
           {page.content?.map((content, index) => (
             <Accordion.Content className="ac" key={index} relative left-3>

@@ -26,10 +26,10 @@ const LazyMotion = dynamic(
   () => import("@ui/lazy-export/framer-motion/LazyMotion")
 );
 const MotionDiv = dynamic(() => import("@ui/lazy-export/framer-motion/m/div"));
-const ListFolder = dynamic(() => import("@ui/list/folder"));
-const NewListFolder = dynamic(() => import("@ui/list/folder/new"));
-const TableFolder = dynamic(() => import("@ui/table/folder"));
-const NewTableFolder = dynamic(() => import("@ui/table/folder/new"));
+const ListFolder = dynamic(() => import("@ui/app/list//folder"));
+const NewListFolder = dynamic(() => import("@ui/app/list/folder/new"));
+const TableFolder = dynamic(() => import("@ui/app/table/folder"));
+const NewTableFolder = dynamic(() => import("@ui/app/table/folder/new"));
 const PageModal = dynamic(() => import("@ui/app/page/modal"));
 
 export default function Index() {
@@ -169,9 +169,35 @@ export default function Index() {
                   </TabsContent>
                 </TabsRoot>
               </div>
-              <div z-10>
-                {page ? <PageModal page={page} folder_id={folder._id} /> : null}
-              </div>
+              <>
+                <AnimatePresence>
+                  {page ? (
+                    <LazyMotion features={loadFeatures}>
+                      <MotionDiv
+                        variants={{
+                          initial: {
+                            opacity: 0,
+                            x: 300,
+                          },
+                          animate: {
+                            opacity: 1,
+                            x: 0,
+                          },
+                          exit: {
+                            opacity: 0,
+                            x: 200,
+                          },
+                        }}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
+                      >
+                        <PageModal page={page} folder_id={folder._id} />
+                      </MotionDiv>
+                    </LazyMotion>
+                  ) : null}
+                </AnimatePresence>
+              </>
             </PageContext.Provider>
           </React.Suspense>
         ) : null}

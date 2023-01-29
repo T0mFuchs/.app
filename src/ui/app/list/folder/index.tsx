@@ -58,14 +58,14 @@ export default function Index({ folder }: { folder: Folder }) {
     <>
       <Dialog.Root open={openConfirm} onOpenChange={setOpenConfirm}>
         <Dialog.Portal>
-          <Dialog.Overlay inset-0 fixed bg-neutral="900/95" className="do" />
+          <Dialog.Overlay inset-0 fixed bg-neutral="900/95" className="d" />
           <Dialog.Content
             fixed
             top="1/2"
             left="1/2"
             shadow-xl
             shadow-neutral="800/30"
-            className="tt5050 dc"
+            className="tt5050 c"
           >
             <button
               autoFocus
@@ -172,15 +172,15 @@ export default function Index({ folder }: { folder: Folder }) {
                 duration-300
               />
             </Accordion.Trigger>
+            <span inline-flex>
+              {folder.tags?.map((tag, index) => (
+                <span pl-2 key={index}>
+                  <FolderTag tag={tag} folder_id={folder._id as string} />
+                </span>
+              ))}
+              <NewFolderTag folder_id={folder._id as string} />
+            </span>
           </Accordion.Header>
-          <span inline-flex>
-            {folder.tags?.map((tag, index) => (
-              <span pl-2 key={index}>
-                <FolderTag tag={tag} folder_id={folder._id as string} />
-              </span>
-            ))}
-            <NewFolderTag folder_id={folder._id as string} />
-          </span>
           <div aria-hidden p-1 />
           {folder.pages?.[0] !== null ? (
             <>
