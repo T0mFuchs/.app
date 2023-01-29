@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React from "react";
 import { Label } from "@radix-ui/react-label";
+import { PageContext } from "@context/page";
 import { trpc } from "@lib/trpc";
 
 import type { Tag as PageTag } from "@types";
@@ -9,11 +10,14 @@ export default function PageTag({
   tag,
   folder_id,
   page_id,
+  index,
 }: {
   tag: PageTag;
   folder_id?: string;
   page_id?: string;
+  index?: number;
 }) {
+  const { page: pageContext, setPage: setPageContext } = React.useContext(PageContext);
   const [currentTag, setCurrentTag] = React.useState<PageTag>(tag);
 
   const updateFolderPageTag = trpc.folderPagesTags.update.useMutation();
@@ -43,6 +47,7 @@ export default function PageTag({
       return;
     }
   };
+
 
   return (
     <form pt-1 onSubmit={onSubmit}>
@@ -89,10 +94,14 @@ export default function PageTag({
         focus:bg-neutral-800
         outline-none
         value={currentTag?.name}
-        onChange={(e) => setCurrentTag({ ...currentTag, name: e.target.value })}
+        onChange={(e) => {
+          //! this doesnt do what i want it to do 
+          setCurrentTag({ ...currentTag, name: e.target.value });
+          setPageContext({ ...pageContext, tags: [currentTag] });
+        }}
         style={{
           width: `${
-            currentTag && currentTag.name?.length > 3
+            currentTag && currentTag?.name?.length > 3
               ? currentTag?.name?.length + 1
               : 4
           }ch`,

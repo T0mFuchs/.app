@@ -7,10 +7,10 @@ import { Label } from "@radix-ui/react-label";
 import { PageContext } from "@context/page";
 import { trpc } from "@lib/trpc";
 
-import PageTag from "./tag";
-import NewPageTag from "./tag/new";
-import PageContent from "./content";
-import NewPageContent from "./content/new";
+import PageTag from "@ui/app/page/tag";
+import NewPageTag from "@ui/app/page/tag/new";
+import PageContent from "@ui/app/page/content";
+import NewPageContent from "@ui/app/page/content/new";
 
 import type { Page } from "@types";
 
@@ -23,7 +23,6 @@ export default function Page({
 }) {
   const [openWarning, setOpenWarning] = React.useState(false);
   const [openConfirm, setOpenConfirm] = React.useState(false);
-  const [currentPage, setCurrentPage] = React.useState<Page>(page);
 
   const updateFolderPage = trpc.folderPages.update.useMutation();
   const deleteFolderPage = trpc.folderPages.delete.useMutation();
@@ -34,15 +33,20 @@ export default function Page({
     setFolder: setFolderContext,
   } = React.useContext(PageContext);
 
+  // makes sure the page context is updated when the page changes in modal
+  React.useEffect(() => {
+    setPageContext(page);
+  }, [page, setPageContext]);
+
   const onSubmit = async (e) => {
     e.preventDefault();
     const updatedPage: Page = {
-      _id: currentPage?._id,
+      _id: pageContext?._id,
       title: e.target.title.value,
       color: e.target.color.value,
-      tags: currentPage?.tags,
-      content: currentPage?.content,
-      iat: currentPage?.iat,
+      tags: pageContext?.tags,
+      content: pageContext?.content,
+      iat: pageContext?.iat,
     };
 
     if (updatedPage.title === "") {
@@ -55,7 +59,7 @@ export default function Page({
         return;
       } else {
         deleteFolderPage.mutate({
-          folder_id: folder_id,
+          folder_id: folderContext?._id,
           page_id: page._id,
         });
         setOpenWarning(false);
@@ -63,8 +67,8 @@ export default function Page({
       }
     }
     if (
-      currentPage?.title !== page.title ||
-      currentPage?.color !== page.color
+      pageContext?.title !== page.title ||
+      pageContext?.color !== page.color
     ) {
       updateFolderPage.mutate({
         folder_id: folder_id,
@@ -99,8 +103,8 @@ export default function Page({
               outline-none
               onClick={() => {
                 deleteFolderPage.mutate({
-                  folder_id: folder_id,
-                  page_id: currentPage._id,
+                  folder_id: folderContext?._id,
+                  page_id: pageContext._id,
                 });
                 setOpenConfirm(false);
                 setOpenWarning(false);
@@ -132,7 +136,7 @@ export default function Page({
                   inline-flex
                   shadow-xl
                   className="hover:shadow-neutral-800/30 focus:shadow-neutral-800/30 at"
-                  id={`p${currentPage?._id}`}
+                  id={`p${pageContext?._id}`}
                 >
                   <form onSubmit={onSubmit}>
                     <Label htmlFor="color" />
@@ -144,15 +148,15 @@ export default function Page({
                       outline-none
                       type="color"
                       name="color"
-                      value={currentPage?.color ?? "var(--text)"}
+                      value={pageContext?.color ?? "var(--text)"}
                       onChange={(e) =>
-                        setCurrentPage({
-                          ...currentPage,
+                        setPageContext({
+                          ...pageContext,
                           color: e.target.value,
                         })
                       }
                       style={{
-                        backgroundColor: currentPage?.color ?? "var(--text)",
+                        backgroundColor: pageContext?.color ?? "var(--text)",
                       }}
                     />
                     <Label htmlFor="title" />
@@ -169,20 +173,16 @@ export default function Page({
                       focus:bg-neutral-800
                       outline-none
                       onChange={(e) =>
-                        setCurrentPage({
-                          ...currentPage,
+                        setPageContext({
+                          ...pageContext,
                           title: e.target.value,
                         })
                       }
-                      value={
-                        currentPage && currentPage._id === page?._id
-                          ? currentPage?.title
-                          : page?.title
-                      }
+                      value={pageContext?.title}
                       style={{
                         width: `${
-                          currentPage && currentPage.title?.length > 3
-                            ? currentPage?.title?.length + 1
+                          pageContext?.title?.length > 3
+                            ? pageContext?.title?.length + 1
                             : 4
                         }ch`,
                       }}
@@ -215,14 +215,14 @@ export default function Page({
                     title="open in separated"
                     style={{ backgroundColor: "var(--text)" }}
                     onClick={() => {
-                      setPageContext(currentPage);
+                      setPageContext(page);
                       setFolderContext({ _id: folder_id });
                     }}
                   />
                 </ContextMenu.Item>
               </ContextMenu.Content>
             </ContextMenu.Root>
-            <span inline-flex>
+            <span inline-flex relative left-1>
               {page.tags?.map((tag, index) => (
                 <PageTag
                   tag={tag}

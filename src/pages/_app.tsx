@@ -12,6 +12,7 @@ function App({ Component, pageProps }: AppProps) {
       <QueryClientProvider client={queryClient}>
         <Component {...pageProps} />
         <style global jsx>{`
+          /* https://github.com/vercel/styled-jsx */
           :root {
             --text: #0e0c0c;
             --bg: #f0f0efee;
