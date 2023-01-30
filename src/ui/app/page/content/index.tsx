@@ -2,6 +2,7 @@
 import React from "react";
 import { Label } from "@radix-ui/react-label";
 import { Separator } from "@radix-ui/react-separator";
+import { PageContext } from "@context/page";
 import { trpc } from "@lib/trpc";
 
 import type { PageContent as PageContentType } from "@/types";
@@ -21,43 +22,44 @@ export default function PageContent({
   content,
   folder_id,
   page_id,
+  index,
+  callback,
 }: {
   content: PageContentType;
   folder_id?: string;
   page_id?: string;
+  index: number;
+  callback: () => void;
 }) {
-  const [currentContent, setCurrentContent] =
-    React.useState<PageContentType>(content);
+  const { page: pageContext, setPage: setPageContext } =
+    React.useContext(PageContext);
 
   const updateFolderPageContent = trpc.folderPagesContent.update.useMutation();
-
   const deleteFolderPageContent = trpc.folderPagesContent.delete.useMutation();
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const updatedContent: PageContentType = {
-      elem: e.target.elem.value,
-      text: e.target.text.value,
-    };
-    if (updatedContent.text === "") {
+    if (pageContext?.content[index]?.text === "") {
       deleteFolderPageContent.mutate({
         folder_id: folder_id,
         page_id: page_id,
         content_id: content._id,
       });
-      return;
+      callback;
+      return null;
     }
     if (
-      currentContent?.text !== content.text ||
-      currentContent?.elem !== content.elem
+      pageContext?.content[index]?.text !== content.text ||
+      pageContext?.content[index]?.elem !== content.elem
     ) {
       updateFolderPageContent.mutate({
         folder_id: folder_id,
         page_id: page_id,
-        content_id: content._id,
-        content: updatedContent,
+        content: pageContext?.content,
       });
-      return;
+      setPageContext({ ...pageContext, content: pageContext?.content });
+      callback;
+      return null;
     }
   };
 
@@ -67,7 +69,6 @@ export default function PageContent({
         <Label htmlFor="elem" />
         <select
           name="elem"
-          defaultValue={content.elem}
           border-1
           border-transparent
           rounded
@@ -82,9 +83,27 @@ export default function PageContent({
           text-center
           relative
           right-2
-          onChange={(e) =>
-            setCurrentContent({ ...currentContent, elem: e.target.value })
+          value={
+            pageContext && pageContext.content[index]?._id === content._id
+              ? pageContext?.tags[index]?.elem
+              : content.elem
           }
+          onChange={(e) => {
+            setPageContext({
+              ...pageContext,
+              content: [
+                ...pageContext.content.map((x, i) => {
+                  if (i === index) {
+                    return {
+                      elem: e.target.value,
+                      text: pageContext.content[index].text,
+                      _id: content._id,
+                    };
+                  } else return x;
+                }),
+              ],
+            });
+          }}
         >
           <option w-12 value="p">
             p
@@ -118,15 +137,34 @@ export default function PageContent({
           hover:bg-neutral-800
           focus:bg-neutral-800
           outline-none
-          value={currentContent?.text}
-          className={handleElem(currentContent.elem)}
-          onChange={(e) =>
-            setCurrentContent({ ...currentContent, text: e.target.value })
+          value={
+            pageContext && pageContext.content[index]?._id === content._id
+              ? pageContext?.content[index]?.text
+              : content.text
           }
+          className={handleElem(
+            pageContext ? pageContext.content[index]?.elem : content.elem
+          )}
+          onChange={(e) => {
+            setPageContext({
+              ...pageContext,
+              content: [
+                ...pageContext.content.map((x, i) => {
+                  if (i === index) {
+                    return {
+                      elem: pageContext.content[index].elem,
+                      text: e.target.value,
+                      _id: content._id,
+                    };
+                  } else return x;
+                }),
+              ],
+            });
+          }}
           style={{
             width: `${
-              currentContent && currentContent.text?.length > 3
-                ? currentContent?.text?.length + 1
+              pageContext && pageContext.content[index]?.text.length > 3
+                ? pageContext.content[index]?.text.length + 1
                 : 4
             }ch`,
           }}

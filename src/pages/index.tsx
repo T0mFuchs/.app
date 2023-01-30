@@ -44,7 +44,7 @@ export default function Index() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content="" />
       </Head>
-      <div grid grid-flow-col m-0>
+      <div>
         {data ? (
           <React.Suspense>
             <PageContext.Provider value={{ page, setPage, folder, setFolder }}>

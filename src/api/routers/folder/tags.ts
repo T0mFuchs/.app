@@ -33,16 +33,17 @@ export const folderTagsRouter = router({
         tag: z.object({
           name: z.string(),
           color: z.string(),
+          _id: z.string().length(24),
         }),
       })
     )
     .mutation(async ({ input }) => {
-      const { folder_id, tag_id, tag } = input;
+      const { folder_id, tag } = input;
       await mongooseConnect();
       return await folder.findOneAndUpdate(
         {
           _id: folder_id,
-          "tags._id": tag_id,
+          "tags._id": tag._id,
         },
         { $set: { "tags.$": tag } },
         { returnDocument: "after", upsert: true }

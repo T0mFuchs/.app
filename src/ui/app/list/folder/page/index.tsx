@@ -33,20 +33,15 @@ export default function Page({
     setFolder: setFolderContext,
   } = React.useContext(PageContext);
 
-  // makes sure the page context is updated when the page changes in modal
-  React.useEffect(() => {
-    setPageContext(page);
-  }, [page, setPageContext]);
-
   const onSubmit = async (e) => {
     e.preventDefault();
     const updatedPage: Page = {
-      _id: pageContext?._id,
+      _id: page?._id,
       title: e.target.title.value,
       color: e.target.color.value,
-      tags: pageContext?.tags,
-      content: pageContext?.content,
-      iat: pageContext?.iat,
+      tags: page.tags,
+      content: page.content,
+      iat: page.iat,
     };
 
     if (updatedPage.title === "") {
@@ -136,7 +131,6 @@ export default function Page({
                   inline-flex
                   shadow-xl
                   className="hover:shadow-neutral-800/30 focus:shadow-neutral-800/30 at"
-                  id={`p${pageContext?._id}`}
                 >
                   <form onSubmit={onSubmit}>
                     <Label htmlFor="color" />
@@ -148,7 +142,11 @@ export default function Page({
                       outline-none
                       type="color"
                       name="color"
-                      value={pageContext?.color ?? "var(--text)"}
+                      value={
+                        pageContext && pageContext._id === page._id
+                          ? pageContext?.color
+                          : "var(--text)"
+                      }
                       onChange={(e) =>
                         setPageContext({
                           ...pageContext,
@@ -156,7 +154,10 @@ export default function Page({
                         })
                       }
                       style={{
-                        backgroundColor: pageContext?.color ?? "var(--text)",
+                        backgroundColor:
+                          pageContext && pageContext._id === page._id
+                            ? pageContext?.color
+                            : "var(--text)",
                       }}
                     />
                     <Label htmlFor="title" />
@@ -178,12 +179,21 @@ export default function Page({
                           title: e.target.value,
                         })
                       }
-                      value={pageContext?.title}
+                      onFocus={() => {
+                        setPageContext(page);
+                      }}
+                      value={
+                        pageContext && pageContext._id === page._id
+                          ? pageContext?.title
+                          : page.title
+                      }
                       style={{
                         width: `${
-                          pageContext?.title?.length > 3
-                            ? pageContext?.title?.length + 1
-                            : 4
+                          pageContext?.title && pageContext._id === page._id
+                            ? pageContext.title.length > 3
+                              ? pageContext.title.length + 1
+                              : 4
+                            : page.title.length + 1
                         }ch`,
                       }}
                     />
@@ -227,6 +237,7 @@ export default function Page({
                 <PageTag
                   tag={tag}
                   key={index}
+                  index={index}
                   folder_id={folder_id as string}
                   page_id={page._id as string}
                 />
@@ -238,16 +249,16 @@ export default function Page({
             </span>
           </Accordion.Header>
           <div aria-hidden p-1 />
-          {page.content?.map((content, index) => (
-            <Accordion.Content className="ac" key={index} relative left-3>
+          <Accordion.Content className="ac" relative left-3>
+            {page.content?.map((content, index) => (
               <PageContent
                 content={content}
+                key={index}
+                index={index}
                 folder_id={folder_id as string}
                 page_id={page._id as string}
               />
-            </Accordion.Content>
-          ))}
-          <Accordion.Content className="ac" relative left-3>
+            ))}
             <NewPageContent
               folder_id={folder_id as string}
               page_id={page._id as string}

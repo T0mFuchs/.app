@@ -69,7 +69,7 @@ export const folderPagesRouter = router({
           _id: folder_id,
           "pages._id": page_id,
         },
-        { $set: { pages: update } },
+        { $set: { "folder.$.pages": update } },
         { returnDocument: "after", upsert: true }
       );
     }),
@@ -88,7 +88,7 @@ export const folderPagesRouter = router({
           _id: folder_id,
         },
         { $pull: { pages: { _id: page_id } } },
-        { returnDocument: "after", upsert: true }
+        { returnDocument: "after" }
       );
     }),
 });

@@ -32,23 +32,24 @@ export const folderPagesTagsRouter = router({
       z.object({
         folder_id: z.string().length(24),
         page_id: z.string().length(24),
-        tag_id: z.string().length(24),
-        tag: z.object({
-          name: z.string(),
-          color: z.string(),
-        }),
+        tags: z.array(
+          z.object({
+            name: z.string(),
+            color: z.string(),
+            _id: z.string().length(24),
+          })
+        ),
       })
     )
     .mutation(async ({ input }) => {
-      const { folder_id, page_id, tag_id, tag } = input;
+      const { folder_id, page_id, tags } = input;
       await mongooseConnect();
       return await folder.findOneAndUpdate(
         {
           _id: folder_id,
           "pages._id": page_id,
-          "pages.tags._id": tag_id,
         },
-        { $set: { "pages.$.tags": tag } },
+        { $set: { "pages.$.tags": tags } },
         { returnDocument: "after", upsert: true }
       );
     }),
@@ -69,7 +70,7 @@ export const folderPagesTagsRouter = router({
           "pages._id": page_id,
         },
         { $pull: { "pages.$.tags": { _id: tag_id } } },
-        { returnDocument: "after", upsert: true }
+        { returnDocument: "after" }
       );
     }),
 });

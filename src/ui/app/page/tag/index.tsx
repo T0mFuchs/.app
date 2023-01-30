@@ -15,39 +15,37 @@ export default function PageTag({
   tag: PageTag;
   folder_id?: string;
   page_id?: string;
-  index?: number;
+  index: number;
 }) {
-  const { page: pageContext, setPage: setPageContext } = React.useContext(PageContext);
-  const [currentTag, setCurrentTag] = React.useState<PageTag>(tag);
+  const { page: pageContext, setPage: setPageContext } =
+    React.useContext(PageContext);
 
   const updateFolderPageTag = trpc.folderPagesTags.update.useMutation();
   const deleteFolderPageTag = trpc.folderPagesTags.delete.useMutation();
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const updatedTag: PageTag = {
-      name: e.target.name.value,
-      color: e.target.color.value,
-    };
-    if (updatedTag.name === "") {
+
+    if (pageContext?.tags[index]?.name === "") {
       deleteFolderPageTag.mutate({
         folder_id: folder_id,
         page_id: page_id,
         tag_id: tag._id,
       });
-      return;
+      return null;
     }
-    if (currentTag?.name !== tag.name || currentTag?.color !== tag.color) {
+    if (
+      pageContext?.tags[index]?.name !== tag.name ||
+      pageContext?.tags[index]?.color !== tag.color
+    ) {
       updateFolderPageTag.mutate({
         folder_id: folder_id,
         page_id: page_id,
-        tag_id: tag._id,
-        tag: updatedTag,
+        tags: pageContext?.tags,
       });
-      return;
+      return null;
     }
   };
-
 
   return (
     <form pt-1 onSubmit={onSubmit}>
@@ -69,13 +67,29 @@ export default function PageTag({
         hover:bg-neutral-800
         focus:bg-neutral-800
         outline-none
-        value={currentTag?.color}
-        onChange={(e) =>
-          setCurrentTag({ ...currentTag, color: e.target.value })
-        }
+        value={pageContext ? pageContext?.tags[index]?.color : tag.color}
+        onChange={(e) => {
+          setPageContext({
+            ...pageContext,
+            tags: [
+              ...pageContext.tags.map((t, i) => {
+                if (i === index) {
+                  return {
+                    name: pageContext?.tags[i]?.name,
+                    color: e.target.value,
+                    _id: pageContext?.tags[i]?._id,
+                  };
+                }
+                return t;
+              }),
+            ],
+          });
+        }}
         style={{
-          backgroundColor: currentTag?.color ?? "var(--text)",
-          fill: currentTag?.color ?? "var(--text)",
+          backgroundColor: pageContext
+            ? pageContext?.tags[index]?.color
+            : "var(--text)",
+          fill: pageContext ? pageContext?.tags[index]?.color : "var(--text)",
         }}
       />
       <Label htmlFor="name" />
@@ -93,19 +107,32 @@ export default function PageTag({
         hover:bg-neutral-800
         focus:bg-neutral-800
         outline-none
-        value={currentTag?.name}
+        value={pageContext ? pageContext?.tags[index]?.name : tag.name}
         onChange={(e) => {
-          //! this doesnt do what i want it to do 
-          setCurrentTag({ ...currentTag, name: e.target.value });
-          setPageContext({ ...pageContext, tags: [currentTag] });
+          setPageContext({
+            ...pageContext,
+            tags: [
+              ...pageContext.tags.map((t, i) => {
+                if (i === index) {
+                  return {
+                    name: e.target.value,
+                    color: pageContext?.tags[i]?.color,
+                    _id: pageContext?.tags[i]?._id,
+                  };
+                } else return t;
+              }),
+            ],
+          });
         }}
         style={{
           width: `${
-            currentTag && currentTag?.name?.length > 3
-              ? currentTag?.name?.length + 1
+            pageContext && pageContext.tags[index]?.name.length > 3
+              ? pageContext.tags[index]?.name.length + 1
               : 4
           }ch`,
-          backgroundColor: currentTag?.color,
+          backgroundColor: pageContext
+            ? pageContext?.tags[index]?.color
+            : tag.color,
         }}
       />
     </form>

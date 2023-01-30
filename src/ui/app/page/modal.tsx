@@ -76,6 +76,7 @@ export default function PageModal({
   React.useEffect(() => {
     const resizableElem = ref.current;
     const styles = window.getComputedStyle(resizableElem);
+
     let width = parseInt(styles.width, 10);
     let x = 0;
 
@@ -105,7 +106,7 @@ export default function PageModal({
 
   if (!pageContext) return null;
   return (
-    <div relative left="1/2" style={{ backgroundColor: "var(--bg)" }}>
+    <div fixed z--1 right-0>
       <Dialog.Root open={openConfirm} onOpenChange={setOpenConfirm}>
         <Dialog.Portal>
           <Dialog.Overlay inset-0 fixed bg-neutral="900/95" className="do" />
@@ -141,7 +142,7 @@ export default function PageModal({
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
-      <div ref={ref}>
+      <div ref={ref} style={{ backgroundColor: "var(--bg)" }}>
         <div aria-hidden z--1 fixed className="o s" />
         <button
           i-mdi-close
@@ -205,12 +206,18 @@ export default function PageModal({
           </div>
           <div flex>
             <span i-mdi-tag relative top-2 />
-            <span relative top-2>Tags</span>
+            <span relative top-2>
+              Tags
+            </span>
             <span inline-flex relative left-5>
               {pageContext?.tags?.map((tag, index) => (
-                <span key={index}>
-                  <PageTag tag={tag} folder_id={folder_id} page_id={pageContext._id} index={index} />
-                </span>
+                <PageTag
+                  tag={tag}
+                  key={index}
+                  index={index}
+                  folder_id={folder_id}
+                  page_id={pageContext._id}
+                />
               ))}
               <NewPageTag folder_id={folder_id} page_id={pageContext._id} />
             </span>
@@ -218,11 +225,15 @@ export default function PageModal({
           <Separator bg-neutral-800 w-full h="1px" />
           <div p-4>
             {pageContext?.content?.map((content, index) => (
-              <div key={index}>
-                <PageContent content={content} folder_id={folder_id} page_id={pageContext._id} />
-              </div>
+              <PageContent
+                content={content}
+                key={index}
+                index={index}
+                folder_id={folder_id}
+                page_id={pageContext._id}
+              />
             ))}
-              <NewPageContent folder_id={folder_id} page_id={pageContext._id} />
+            <NewPageContent folder_id={folder_id} page_id={pageContext._id} />
           </div>
         </div>
         <div></div>

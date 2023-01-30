@@ -32,21 +32,22 @@ export const folderPagesContentRouter = router({
       z.object({
         folder_id: z.string().length(24),
         page_id: z.string().length(24),
-        content_id: z.string().length(24),
-        content: z.object({
-          elem: z.string(),
-          text: z.string(),
-        }),
+        content: z.array(
+          z.object({
+            elem: z.string(),
+            text: z.string(),
+            _id: z.string().length(24),
+          })
+        ),
       })
     )
     .mutation(async ({ input }) => {
-      const { folder_id, page_id, content_id, content } = input;
+      const { folder_id, page_id, content } = input;
       await mongooseConnect();
       return await folder.findOneAndUpdate(
         {
           _id: folder_id,
           "pages._id": page_id,
-          "pages.content._id": content_id,
         },
         { $set: { "pages.$.content": content } },
         { returnDocument: "after", upsert: true }
