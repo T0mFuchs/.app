@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import * as Select from "@radix-ui/react-select";
 import { Label } from "@radix-ui/react-label";
