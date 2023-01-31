@@ -74,11 +74,12 @@ export default function PageModal({
 
   const ref = React.useRef(null);
   const refLeft = React.useRef(null);
-  const wrapperRef = React.useRef(null);
+  const reftLeftSeparator = React.useRef(null);
 
   React.useEffect(() => {
-    const resizableElem = ref.current;
-    const styles = window.getComputedStyle(resizableElem);
+    const modalDiv = ref.current;
+    const separator = reftLeftSeparator.current;
+    const styles = window.getComputedStyle(modalDiv);
 
     let width = parseInt(styles.width, 10);
     let x = 0;
@@ -87,16 +88,20 @@ export default function PageModal({
       const dx = e.clientX - x;
       x = e.clientX;
       width = width - dx;
-      resizableElem.style.width = `${width}px`;
+      modalDiv.style.width = `${width}px`;
     };
     const onMouseUpLeftResize = (e) => {
       document.removeEventListener("mousemove", onMouseMoveLeftResize);
+      separator.style.width = "1px";
+      separator.style.backgroundColor = "#262626";
     };
     const onMouseDownLeftResize = (e) => {
       x = e.clientX;
-      resizableElem.style.right = styles.right;
-      resizableElem.style.left = null;
-      resizableElem.style.cursor = "ew-resize";
+      modalDiv.style.right = styles.right;
+      modalDiv.style.left = null;
+      modalDiv.style.cursor = "col-resize";
+      separator.style.width = "5px"; 
+      separator.style.backgroundColor = "#1d4ed8"; // tailwindcss blue-700
       document.addEventListener("mousemove", onMouseMoveLeftResize);
       document.addEventListener("mouseup", onMouseUpLeftResize);
     };
@@ -107,9 +112,9 @@ export default function PageModal({
     };
   }, []);
 
-  if (!pageContext) return null;
+  if (!pageContext | !folderContext) return null;
   return (
-    <div fixed z--1 right-0 ref={wrapperRef}>
+    <div fixed z--1 right-0>
       <Dialog.Root open={openConfirm} onOpenChange={setOpenConfirm}>
         <Dialog.Portal>
           <Dialog.Overlay inset-0 fixed bg-neutral="900/95" className="do" />
@@ -214,9 +219,13 @@ export default function PageModal({
         </div>
         <div>
           <span i-mdi-link relative top="-.5" mr-1 />
-          {page._id}
+          <span title="folder._id">
+            {folderContext ? folderContext._id : folder_id}
+          </span>
           <span i-mdi-chevron-double-right relative top="-.5" mr-1 />
-          {folder_id}
+          <span title="page._id">
+            {pageContext ? pageContext._id : page._id}
+          </span>
         </div>
         <Separator
           absolute
@@ -232,6 +241,7 @@ export default function PageModal({
             h="100vmax"
             ml-1
             bg-neutral-800
+            ref={reftLeftSeparator}
             orientation="vertical"
           />
         </div>

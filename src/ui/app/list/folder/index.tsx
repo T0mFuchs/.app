@@ -30,12 +30,12 @@ export default function Index({ folder }: { folder: Folder }) {
   const onSubmit = async (e) => {
     e.preventDefault();
     const updatedFolder: Folder = {
-      _id: currentFolder?._id,
+      _id: folder._id,
       name: e.target.name.value,
       color: e.target.color.value,
-      tags: currentFolder?.tags,
-      pages: currentFolder?.pages,
-      iat: currentFolder?.iat,
+      tags: folder.tags,
+      pages: folder.pages,
+      iat: folder.iat,
     };
     if (updatedFolder.name === "") {
       if (updatedFolder.pages?.length > 0 && openWarning) {
@@ -102,42 +102,42 @@ export default function Index({ folder }: { folder: Folder }) {
                 {"<!> "}this folder is <span underline>not</span> empty{" <!>"}
               </div>
             ) : null}
-            <Accordion.Trigger
-              border-0
-              bg-transparent
-              rounded
-              hover:animate-pulse
-              focus:animate-pulse
-              outline-none
-              inline-flex
-              shadow-lg
-              onClick={() => {
-                setFolderContext(folder);
-                setPageContext(null);
-              }}
-              className="hover:shadow-neutral-800/30 focus:shadow-neutral-800/30 at"
-            >
-              <form onSubmit={onSubmit}>
-                <Label htmlFor="color" />
-                <input
-                  i-mdi-folder
-                  relative
-                  right="1.5"
-                  top="-.5"
-                  outline-none
-                  type="color"
-                  name="color"
-                  value={currentFolder?.color ?? "var(--text)"}
-                  onChange={(e) =>
-                    setCurrentFolder({
-                      ...currentFolder,
-                      color: e.target.value,
-                    })
-                  }
-                  style={{
-                    backgroundColor: currentFolder?.color ?? "var(--text)",
-                  }}
-                />
+            <form inline-flex onSubmit={onSubmit}>
+              <Label htmlFor="color" />
+              <input
+                i-mdi-folder
+                relative
+                right="1.5"
+                top="1.5"
+                outline-none
+                type="color"
+                name="color"
+                value={currentFolder?.color ?? "var(--text)"}
+                onChange={(e) =>
+                  setCurrentFolder({
+                    ...currentFolder,
+                    color: e.target.value,
+                  })
+                }
+                style={{
+                  backgroundColor: currentFolder?.color ?? "var(--text)",
+                }}
+              />
+              <Accordion.Trigger
+                border-0
+                bg-transparent
+                rounded
+                hover:animate-pulse
+                focus:animate-pulse
+                outline-none
+                inline-flex
+                shadow-lg
+                onClick={() => {
+                  setFolderContext(folder);
+                  setPageContext(null);
+                }}
+                className="hover:shadow-neutral-800/30 focus:shadow-neutral-800/30 at"
+              >
                 <Label htmlFor="name" />
                 <input
                   type="text"
@@ -154,6 +154,7 @@ export default function Index({ folder }: { folder: Folder }) {
                   onChange={(e) =>
                     setCurrentFolder({
                       ...currentFolder,
+                      _id: folder._id,
                       name: e.target.value,
                     })
                   }
@@ -170,26 +171,27 @@ export default function Index({ folder }: { folder: Folder }) {
                     }ch`,
                   }}
                 />
-              </form>
-              <span
-                i-mdi-chevron-down
-                className="i"
-                relative
-                top="1.5"
-                left-1
-                transform-gpu
-                transition-transform
-                duration-300
-              />
-            </Accordion.Trigger>
-            <span inline-flex>
-              {folder.tags?.map((tag, index) => (
-                <span pl-2 key={index}>
-                  <FolderTag tag={tag} folder_id={folder._id as string} />
-                </span>
-              ))}
-              <NewFolderTag folder_id={folder._id as string} />
-            </span>
+
+                <span
+                  i-mdi-chevron-down
+                  className="i"
+                  relative
+                  top="1.5"
+                  left-1
+                  transform-gpu
+                  transition-transform
+                  duration-300
+                />
+              </Accordion.Trigger>
+              <span inline-flex>
+                {folder.tags?.map((tag, index) => (
+                  <span pl-2 key={index}>
+                    <FolderTag tag={tag} folder_id={folder._id as string} />
+                  </span>
+                ))}
+                <NewFolderTag folder_id={folder._id as string} />
+              </span>
+            </form>
           </Accordion.Header>
           <div aria-hidden p-1 />
           {folder.pages?.[0] !== null ? (

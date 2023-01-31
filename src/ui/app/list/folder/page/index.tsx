@@ -40,12 +40,12 @@ export default function Page({
   const onSubmit = async (e) => {
     e.preventDefault();
     const updatedPage: Page = {
-      _id: page?._id,
-      title: e.target.title.value,
-      color: e.target.color.value,
-      tags: page.tags,
-      content: page.content,
-      iat: page.iat,
+      _id: page._id,
+      title: pageContext.title,
+      color: pageContext.color,
+      tags: pageContext.tags,
+      content: pageContext.content,
+      iat: pageContext.iat,
     };
 
     if (updatedPage.title === "") {
@@ -135,6 +135,7 @@ export default function Page({
                 {"<!> "}this page is <span underline>not</span> empty{" <!>"}
               </div>
             ) : null}
+
             <ContextMenu.Root modal={false}>
               <ContextMenu.Trigger>
                 <form inline-flex onSubmit={onSubmit}>
@@ -142,14 +143,14 @@ export default function Page({
                   <input
                     i-mdi-file
                     relative
-                    right="1.5"
-                    top="-.5"
+                    right-1
+                    top-2
                     outline-none
                     type="color"
                     name="color"
                     value={
                       pageContext && pageContext._id === page._id
-                        ? pageContext?.color
+                        ? pageContext.color
                         : page.color
                     }
                     onChange={(e) =>
@@ -161,24 +162,22 @@ export default function Page({
                     style={{
                       backgroundColor:
                         pageContext && pageContext._id === page._id
-                          ? pageContext?.color
+                          ? pageContext.color
                           : page.color,
                     }}
                   />
-                </form>
-                <Accordion.Trigger
-                  border-0
-                  bg-transparent
-                  border-b-1
-                  rounded-t
-                  hover:animate-pulse
-                  focus:animate-pulse
-                  outline-none
-                  inline-flex
-                  shadow-xl
-                  className="hover:shadow-neutral-800/30 focus:shadow-neutral-800/30 at"
-                >
-                  <form onSubmit={onSubmit}>
+                  <Accordion.Trigger
+                    border-0
+                    bg-transparent
+                    border-b-1
+                    rounded-t
+                    hover:animate-pulse
+                    focus:animate-pulse
+                    outline-none
+                    inline-flex
+                    shadow-xl
+                    className="hover:shadow-neutral-800/30 focus:shadow-neutral-800/30 at"
+                  >
                     <Label htmlFor="title" />
                     <input
                       type="text"
@@ -213,18 +212,19 @@ export default function Page({
                         }ch`,
                       }}
                     />
-                  </form>
-                  <span
-                    i-mdi-chevron-down
-                    className="i"
-                    relative
-                    top="1.5"
-                    left-1
-                    transform-gpu
-                    transition-transform
-                    duration-300
-                  />
-                </Accordion.Trigger>
+
+                    <span
+                      i-mdi-chevron-down
+                      className="i"
+                      relative
+                      top="1.5"
+                      left-1
+                      transform-gpu
+                      transition-transform
+                      duration-300
+                    />
+                  </Accordion.Trigger>
+                </form>
               </ContextMenu.Trigger>
               <ContextMenu.Content
                 alignOffset={10}
@@ -252,6 +252,8 @@ export default function Page({
               bg-transparent
               border-0
               inline-flex
+              relative
+              top--2
               hover:animate-pulse
               focus:animate-pulse
               outline-none
@@ -260,6 +262,7 @@ export default function Page({
               }
               onClick={() => {
                 setPageContext(page);
+                setFolderContext({ ...folderContext, _id: folder_id });
                 setPageContextIndex(index);
               }}
               style={{ opacity: 0 }}
@@ -269,7 +272,7 @@ export default function Page({
               <span i-mdi-dock-right relative top="1px" />
               <span pl-1>open</span>
             </button>
-            <span inline-flex relative left-1>
+            <span inline-flex relative top--2 left-1>
               {page.tags?.map((tag, index) => (
                 <PageTag
                   tag={tag}
