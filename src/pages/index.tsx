@@ -36,6 +36,7 @@ export default function Index() {
   const { data, isLoading, isFetching } = trpc.folder.find.useQuery({});
   const [value, setValue] = React.useState<string>("0");
   const [page, setPage] = React.useState<Page | undefined>(null);
+  const [pageIndex, setPageIndex] = React.useState<number | undefined>(null);
   const [folder, setFolder] = React.useState<Folder | undefined>(null);
   return (
     <>
@@ -47,7 +48,16 @@ export default function Index() {
       <div>
         {data ? (
           <React.Suspense>
-            <PageContext.Provider value={{ page, setPage, folder, setFolder }}>
+            <PageContext.Provider
+              value={{
+                page,
+                setPage,
+                pageIndex,
+                setPageIndex,
+                folder,
+                setFolder,
+              }}
+            >
               <div>
                 <TabsRoot defaultValue="0" grid absolute top-8 left-8 w-full>
                   <TabsList flex gap-1 pb-6>

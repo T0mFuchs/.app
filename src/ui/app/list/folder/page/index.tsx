@@ -15,9 +15,11 @@ import NewPageContent from "@ui/app/page/content/new";
 import type { Page } from "@types";
 
 export default function Page({
+  index,
   page,
   folder_id,
 }: {
+  index: number;
   page: Page;
   folder_id?: string;
 }) {
@@ -29,6 +31,8 @@ export default function Page({
   const {
     page: pageContext,
     setPage: setPageContext,
+    pageIndex: pageContextIndex,
+    setPageIndex: setPageContextIndex,
     folder: folderContext,
     setFolder: setFolderContext,
   } = React.useContext(PageContext);
@@ -73,6 +77,15 @@ export default function Page({
     }
   };
 
+  const openModalRef = React.useRef<>(null);
+
+  const mouseEnter = (evt) => {
+    openModalRef.current.style.opacity = 1;
+  };
+  const mouseLeave = (evt) => {
+    openModalRef.current.style.opacity = 0;
+  };
+
   return (
     <>
       <Dialog.Root open={openConfirm} onOpenChange={setOpenConfirm}>
@@ -111,7 +124,11 @@ export default function Page({
         </Dialog.Portal>
       </Dialog.Root>
       <Accordion.Root type="multiple" key={page._id}>
-        <Accordion.Item value={`item-page-${page._id}`}>
+        <Accordion.Item
+          value={`item-page-${page._id}`}
+          onMouseEnter={mouseEnter}
+          onMouseLeave={mouseLeave}
+        >
           <Accordion.Header>
             {openWarning ? (
               <div text-red font-700 animate-pulse leading-4 text-sm pb-1>
@@ -120,6 +137,35 @@ export default function Page({
             ) : null}
             <ContextMenu.Root modal={false}>
               <ContextMenu.Trigger>
+                <form inline-flex onSubmit={onSubmit}>
+                  <Label htmlFor="color" />
+                  <input
+                    i-mdi-file
+                    relative
+                    right="1.5"
+                    top="-.5"
+                    outline-none
+                    type="color"
+                    name="color"
+                    value={
+                      pageContext && pageContext._id === page._id
+                        ? pageContext?.color
+                        : page.color
+                    }
+                    onChange={(e) =>
+                      setPageContext({
+                        ...pageContext,
+                        color: e.target.value,
+                      })
+                    }
+                    style={{
+                      backgroundColor:
+                        pageContext && pageContext._id === page._id
+                          ? pageContext?.color
+                          : page.color,
+                    }}
+                  />
+                </form>
                 <Accordion.Trigger
                   border-0
                   bg-transparent
@@ -133,33 +179,6 @@ export default function Page({
                   className="hover:shadow-neutral-800/30 focus:shadow-neutral-800/30 at"
                 >
                   <form onSubmit={onSubmit}>
-                    <Label htmlFor="color" />
-                    <input
-                      i-mdi-file
-                      relative
-                      right="1.5"
-                      top="-.5"
-                      outline-none
-                      type="color"
-                      name="color"
-                      value={
-                        pageContext && pageContext._id === page._id
-                          ? pageContext?.color
-                          : "var(--text)"
-                      }
-                      onChange={(e) =>
-                        setPageContext({
-                          ...pageContext,
-                          color: e.target.value,
-                        })
-                      }
-                      style={{
-                        backgroundColor:
-                          pageContext && pageContext._id === page._id
-                            ? pageContext?.color
-                            : "var(--text)",
-                      }}
-                    />
                     <Label htmlFor="title" />
                     <input
                       type="text"
@@ -179,9 +198,6 @@ export default function Page({
                           title: e.target.value,
                         })
                       }
-                      onFocus={() => {
-                        setPageContext(page);
-                      }}
                       value={
                         pageContext && pageContext._id === page._id
                           ? pageContext?.title
@@ -232,6 +248,27 @@ export default function Page({
                 </ContextMenu.Item>
               </ContextMenu.Content>
             </ContextMenu.Root>
+            <button
+              bg-transparent
+              border-0
+              inline-flex
+              hover:animate-pulse
+              focus:animate-pulse
+              outline-none
+              disabled={
+                pageContext && pageContext.title === page.title ? true : false
+              }
+              onClick={() => {
+                setPageContext(page);
+                setPageContextIndex(index);
+              }}
+              style={{ opacity: 0 }}
+              autoFocus
+              ref={openModalRef}
+            >
+              <span i-mdi-dock-right relative top="1px" />
+              <span pl-1>open</span>
+            </button>
             <span inline-flex relative left-1>
               {page.tags?.map((tag, index) => (
                 <PageTag

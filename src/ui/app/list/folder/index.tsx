@@ -3,7 +3,7 @@ import React from "react";
 import * as Accordion from "@radix-ui/react-accordion";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Label } from "@radix-ui/react-label";
-import { Separator } from "@radix-ui/react-separator";
+import { PageContext } from "@context/page";
 import { trpc } from "@lib/trpc";
 
 import Page from "./page";
@@ -17,6 +17,12 @@ export default function Index({ folder }: { folder: Folder }) {
   const [openWarning, setOpenWarning] = React.useState(false);
   const [openConfirm, setOpenConfirm] = React.useState(false);
   const [currentFolder, setCurrentFolder] = React.useState<Folder>(folder);
+  const {
+    page: pageContext,
+    setPage: setPageContext,
+    folder: folderContext,
+    setFolder: setFolderContext,
+  } = React.useContext(PageContext);
 
   const updateMutation = trpc.folder.update.useMutation();
   const deleteMutation = trpc.folder.delete.useMutation();
@@ -105,6 +111,10 @@ export default function Index({ folder }: { folder: Folder }) {
               outline-none
               inline-flex
               shadow-lg
+              onClick={() => {
+                setFolderContext(folder);
+                setPageContext(null);
+              }}
               className="hover:shadow-neutral-800/30 focus:shadow-neutral-800/30 at"
             >
               <form onSubmit={onSubmit}>
@@ -191,7 +201,11 @@ export default function Index({ folder }: { folder: Folder }) {
                   relative
                   left-3
                 >
-                  <Page page={page} folder_id={folder._id as string} />
+                  <Page
+                    index={index}
+                    page={page}
+                    folder_id={folder._id as string}
+                  />
                 </Accordion.Content>
               ))}
             </>

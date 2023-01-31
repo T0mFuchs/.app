@@ -23,13 +23,11 @@ export default function PageContent({
   folder_id,
   page_id,
   index,
-  callback,
 }: {
   content: PageContentType;
   folder_id?: string;
   page_id?: string;
   index: number;
-  callback: () => void;
 }) {
   const { page: pageContext, setPage: setPageContext } =
     React.useContext(PageContext);
@@ -45,7 +43,6 @@ export default function PageContent({
         page_id: page_id,
         content_id: content._id,
       });
-      callback;
       return null;
     }
     if (
@@ -58,7 +55,6 @@ export default function PageContent({
         content: pageContext?.content,
       });
       setPageContext({ ...pageContext, content: pageContext?.content });
-      callback;
       return null;
     }
   };

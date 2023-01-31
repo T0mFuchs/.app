@@ -64,13 +64,14 @@ export const folderPagesRouter = router({
         eat: Date.now(),
       };
       await mongooseConnect();
+
       return await folder.findOneAndUpdate(
         {
           _id: folder_id,
           "pages._id": page_id,
         },
-        { $set: { "folder.$.pages": update } },
-        { returnDocument: "after", upsert: true }
+        { $set: { "pages.$": update } },
+        { upsert: true }
       );
     }),
   delete: procedure

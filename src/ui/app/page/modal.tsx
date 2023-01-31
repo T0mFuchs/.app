@@ -24,6 +24,8 @@ export default function PageModal({
   const {
     page: pageContext,
     setPage: setPageContext,
+    pageIndex: pageContextIndex,
+    setPageIndex: setPageContextIndex,
     folder: folderContext,
     setFolder: setFolderContext,
   } = React.useContext(PageContext);
@@ -72,6 +74,7 @@ export default function PageModal({
 
   const ref = React.useRef(null);
   const refLeft = React.useRef(null);
+  const wrapperRef = React.useRef(null);
 
   React.useEffect(() => {
     const resizableElem = ref.current;
@@ -106,7 +109,7 @@ export default function PageModal({
 
   if (!pageContext) return null;
   return (
-    <div fixed z--1 right-0>
+    <div fixed z--1 right-0 ref={wrapperRef}>
       <Dialog.Root open={openConfirm} onOpenChange={setOpenConfirm}>
         <Dialog.Portal>
           <Dialog.Overlay inset-0 fixed bg-neutral="900/95" className="do" />
@@ -144,14 +147,71 @@ export default function PageModal({
       </Dialog.Root>
       <div ref={ref} style={{ backgroundColor: "var(--bg)" }}>
         <div aria-hidden z--1 fixed className="o s" />
-        <button
-          i-mdi-close
-          relative
-          top-1
-          left="-3.5"
-          bg-red
-          onClick={() => setPageContext(null)}
-        />
+        <div p-1 pb-2 flex gap-2>
+          <button
+            i-mdi-close
+            relative
+            top-1
+            focus:bg-red
+            hover:bg-red
+            title="close"
+            onClick={() => setPageContext(null)}
+          />
+          <button
+            i-mdi-arrow-collapse
+            relative
+            top-1
+            left--1
+            focus:bg-red
+            hover:bg-red
+            title="collapse"
+            onClick={() => (ref.current.style.width = "fit-content")}
+          />
+          <button
+            i-mdi-arrow-collapse-horizontal
+            relative
+            top-1
+            left--1
+            focus:bg-red
+            hover:bg-red
+            title="split"
+            onClick={() => (ref.current.style.width = "50vw")}
+          />
+          <button
+            i-mdi-menu-up-outline
+            relative
+            top-1
+            focus:animate-pulse
+            title="previous page"
+            disabled={pageContextIndex === 0}
+            onClick={() => {
+              setPageContext(folderContext.pages[pageContextIndex - 1]);
+              setPageContextIndex(pageContextIndex - 1);
+            }}
+          />
+          <button
+            i-mdi-menu-down-outline
+            relative
+            top-1
+            focus:animate-pulse
+            title="next page"
+            disabled={pageContextIndex === folderContext.pages?.length - 1}
+            onClick={() => {
+              setPageContext(folderContext.pages[pageContextIndex + 1]);
+              setPageContextIndex(pageContextIndex + 1);
+            }}
+          />
+          <button
+            i-mdi-fullscreen
+            relative
+            top-1
+            left--1
+            focus:bg-red
+            hover:bg-red
+            title="full"
+            onClick={() => (ref.current.style.width = "100vw")}
+          />
+        </div>
         <div>
           <span i-mdi-link relative top="-.5" mr-1 />
           {page._id}
@@ -165,15 +225,17 @@ export default function PageModal({
           bg-neutral-800
           orientation="horizontal"
         />
-        <Separator
-          absolute
-          w="1px"
-          h="100vmax"
-          bg-neutral-800
-          orientation="vertical"
-          ref={refLeft}
-        />
-        <div>
+        <div absolute w-2 ml--1 h="100vmax" ref={refLeft}>
+          <Separator
+            relative
+            w="1px"
+            h="100vmax"
+            ml-1
+            bg-neutral-800
+            orientation="vertical"
+          />
+        </div>
+        <div p-1>
           <form onSubmit={onSubmit}>
             <Label htmlFor="title" />
             <input
@@ -198,15 +260,17 @@ export default function PageModal({
             />
           </form>
           <div flex>
-            <span i-mdi-calendar-range />
-            <span pr-4>Created</span>
+            <span i-mdi-calendar-range relative top=".25" />
+            <span pl-1 pr-4>
+              Created
+            </span>
             <span>
               {format(new Date(pageContext?.iat), "MMMM d, yyyy h:mm a")}
             </span>
           </div>
           <div flex>
-            <span i-mdi-tag relative top-2 />
-            <span relative top-2>
+            <span i-mdi-tag relative top="2.25" />
+            <span pl-1 relative top-2>
               Tags
             </span>
             <span inline-flex relative left-5>
