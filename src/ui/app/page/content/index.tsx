@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React from "react";
+import * as Select from "@radix-ui/react-select";
 import { Label } from "@radix-ui/react-label";
 import { Separator } from "@radix-ui/react-separator";
 import { PageContext } from "@context/page";
@@ -27,6 +28,8 @@ export default function PageContent({
 }) {
   const { page: pageContext, setPage: setPageContext } =
     React.useContext(PageContext);
+    
+  const [openSelect, setOpenSelect] = React.useState(false);
 
   const updateFolderPageContent = trpc.folderPagesContent.update.useMutation();
   const deleteFolderPageContent = trpc.folderPagesContent.delete.useMutation();
@@ -41,26 +44,29 @@ export default function PageContent({
       });
       return null;
     }
-    if (
-      pageContext?.content[index]?.text !== content.text ||
-      pageContext?.content[index]?.elem !== content.elem
-    ) {
-      updateFolderPageContent.mutate({
-        folder_id: folder_id,
-        page_id: page_id,
-        content: pageContext?.content,
-      });
-      setPageContext({ ...pageContext, content: pageContext?.content });
-      return null;
-    }
+
+    updateFolderPageContent.mutate({
+      folder_id: folder_id,
+      page_id: page_id,
+      content: pageContext?.content,
+    });
   };
 
-  const ref = React.useRef(null);
-  const mouseEnter = (e) => {
-    ref.current.style.opacity = 1;
+  const ref = React.useRef<>(null);
+
+  const showPlaceholder = (evt) => {
+    if (pageContext?.content[index]?.text === "") {
+      ref.current.placeholder = "type `/` for options";
+      ref.current.style.width = "20ch";
+    }
   };
-  const mouseLeave = (e) => {
-    ref.current.style.opacity = 0;
+  const hidePlaceholder = (evt) => {
+    ref.current.placeholder = "";
+    ref.current.style.width = `${
+      pageContext && pageContext.content[index]?.text.length > 1
+        ? pageContext.content[index]?.text.length + 1
+        : 2
+    }ch`;
   };
 
   return (
@@ -68,63 +74,11 @@ export default function PageContent({
       <form
         pt-1
         onSubmit={onSubmit}
-        onPointerEnter={mouseEnter}
-        onPointerLeave={mouseLeave}
-        onFocus={mouseEnter}
-        onBlur={mouseLeave}
+        onPointerEnter={showPlaceholder}
+        onPointerLeave={hidePlaceholder}
+        onFocus={showPlaceholder}
+        onBlur={hidePlaceholder}
       >
-        <Label htmlFor="elem" />
-        <select
-          name="elem"
-          border-1
-          border-transparent
-          rounded
-          leading-4
-          text-base
-          hover:border-neutral-400
-          focus:border-neutral-400
-          hover:animate-pulse
-          focus:animate-pulse
-          outline-none
-          w-12
-          text-center
-          relative
-          right-2
-          value={
-            pageContext && pageContext.content[index]?._id === content._id
-              ? pageContext?.tags[index]?.elem
-              : content.elem
-          }
-          onChange={(e) => {
-            setPageContext({
-              ...pageContext,
-              content: [
-                ...pageContext.content.map((x, i) => {
-                  if (i === index) {
-                    return {
-                      elem: e.target.value,
-                      text: pageContext.content[index].text,
-                      _id: content._id,
-                    };
-                  } else return x;
-                }),
-              ],
-            });
-          }}
-          style={{ opacity: 0 }}
-          ref={ref}
-        >
-          <option w-12 value="p">
-            p
-          </option>
-          <option value="h1">h1</option>
-          <option w-12 value="h2">
-            h2
-          </option>
-          <option w-12 value="h3">
-            h3
-          </option>
-        </select>
         <Label htmlFor="text" />
         <input
           m-0
@@ -160,17 +114,202 @@ export default function PageContent({
                 }),
               ],
             });
+            if (e.target.value === "/") {
+              setOpenSelect(true);
+            }
           }}
           style={{
             width: `${
-              pageContext && pageContext.content[index]?.text.length > 3
+              pageContext && pageContext.content[index]?.text.length > 1
                 ? pageContext.content[index]?.text.length + 1
-                : 4
+                : 2
             }ch`,
           }}
+          ref={ref}
           name="text"
           type="text"
         />
+        {openSelect ? (
+          <Select.Root open={openSelect} onOpenChange={setOpenSelect}>
+            <Select.Content>
+              <Select.Viewport
+                relative
+                bg-neutral-800
+                w-full
+                p-1
+                rounded
+                text-center
+              >
+                <Select.Group>
+                  <Select.Item
+                    p-1
+                    tabIndex={0}
+                    autoFocus={pageContext.content[index]?.elem === "p"}
+                    onClick={() => {
+                      setPageContext({
+                        ...pageContext,
+                        content: [
+                          ...pageContext.content.map((x, i) => {
+                            if (i === index) {
+                              return {
+                                elem: "p",
+                                text: "",
+                                _id: content._id,
+                              };
+                            } else return x;
+                          }),
+                        ],
+                      });
+                    }}
+                    onKeyDown={(evt) => {
+                      if (evt.key === "Enter") {
+                        setPageContext({
+                          ...pageContext,
+                          content: [
+                            ...pageContext.content.map((x, i) => {
+                              if (i === index) {
+                                return {
+                                  elem: "p",
+                                  text: "",
+                                  _id: content._id,
+                                };
+                              } else return x;
+                            }),
+                          ],
+                        });
+                      }
+                    }}
+                  >
+                    <Select.ItemText>p</Select.ItemText>
+                  </Select.Item>
+                  <Select.Item
+                    p-1
+                    tabIndex={0}
+                    autoFocus={pageContext.content[index]?.elem === "h1"}
+                    onClick={() => {
+                      setPageContext({
+                        ...pageContext,
+                        content: [
+                          ...pageContext.content.map((x, i) => {
+                            if (i === index) {
+                              return {
+                                elem: "h1",
+                                text: "",
+                                _id: content._id,
+                              };
+                            } else return x;
+                          }),
+                        ],
+                      });
+                    }}
+                    onKeyDown={(evt) => {
+                      if (evt.key === "Enter") {
+                        setPageContext({
+                          ...pageContext,
+                          content: [
+                            ...pageContext.content.map((x, i) => {
+                              if (i === index) {
+                                return {
+                                  elem: "h1",
+                                  text: "",
+                                  _id: content._id,
+                                };
+                              } else return x;
+                            }),
+                          ],
+                        });
+                      }
+                    }}
+                  >
+                    <Select.ItemText>h1</Select.ItemText>
+                  </Select.Item>
+                  <Select.Item
+                    p-1
+                    tabIndex={0}
+                    autoFocus={pageContext.content[index]?.elem === "h2"}
+                    onClick={() => {
+                      setPageContext({
+                        ...pageContext,
+                        content: [
+                          ...pageContext.content.map((x, i) => {
+                            if (i === index) {
+                              return {
+                                elem: "h2",
+                                text: "",
+                                _id: content._id,
+                              };
+                            } else return x;
+                          }),
+                        ],
+                      });
+                    }}
+                    onKeyDown={(evt) => {
+                      if (evt.key === "Enter") {
+                        setPageContext({
+                          ...pageContext,
+                          content: [
+                            ...pageContext.content.map((x, i) => {
+                              if (i === index) {
+                                return {
+                                  elem: "h2",
+                                  text: "",
+                                  _id: content._id,
+                                };
+                              } else return x;
+                            }),
+                          ],
+                        });
+                      }
+                    }}
+                  >
+                    <Select.ItemText>h2</Select.ItemText>
+                  </Select.Item>
+                  <Select.Item
+                    p-1
+                    tabIndex={0}
+                    autoFocus={pageContext.content[index]?.elem === "h3"}
+                    onClick={() => {
+                      setPageContext({
+                        ...pageContext,
+                        content: [
+                          ...pageContext.content.map((x, i) => {
+                            if (i === index) {
+                              return {
+                                elem: "h3",
+                                text: "",
+                                _id: content._id,
+                              };
+                            } else return x;
+                          }),
+                        ],
+                      });
+                    }}
+                    onKeyDown={(evt) => {
+                      if (evt.key === "Enter") {
+                        setPageContext({
+                          ...pageContext,
+                          content: [
+                            ...pageContext.content.map((x, i) => {
+                              if (i === index) {
+                                return {
+                                  elem: "h3",
+                                  text: "",
+                                  _id: content._id,
+                                };
+                              } else return x;
+                            }),
+                          ],
+                        });
+                      }
+                    }}
+                  >
+                    <Select.ItemText>h3</Select.ItemText>
+                  </Select.Item>
+                </Select.Group>
+              </Select.Viewport>
+            </Select.Content>
+          </Select.Root>
+        ) : null}
       </form>
       <Separator w-full bg-neutral-800 h="1px" mb-1 mt="1.5" />
     </>

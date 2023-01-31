@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React from "react";
+import * as Select from "@radix-ui/react-select";
 import { Label } from "@radix-ui/react-label";
 import { trpc } from "@lib/trpc";
 
@@ -26,7 +27,7 @@ export default function NewPageContent({
   const onSubmit = async (e) => {
     e.preventDefault();
     const newContent: PageContentType = {
-      elem: e.target.elem.value,
+      elem: content?.elem ?? "p",
       text: e.target.text.value,
     };
     createFolderPageContent.mutate({
@@ -36,13 +37,19 @@ export default function NewPageContent({
     });
     setContent(null);
   };
+  const ref = React.useRef<>(null);
 
-  const ref = React.useRef(null);
-  const mouseEnter = (e) => {
-    ref.current.style.opacity = 1;
+  const showPlaceholder = (evt) => {
+    if (content?.text === "") {
+      ref.current.placeholder = "type `/` for options";
+      ref.current.style.width = "20ch";
+    }
   };
-  const mouseLeave = (e) => {
-    ref.current.style.opacity = 0;
+  const hidePlaceholder = (evt) => {
+    ref.current.placeholder = "";
+    ref.current.style.width = `${
+      content && content.text.length > 1 ? content.text.length + 1 : 2
+    }ch`;
   };
 
   return (
@@ -50,45 +57,11 @@ export default function NewPageContent({
       <form
         pt-1
         onSubmit={onSubmit}
-        onPointerEnter={mouseEnter}
-        onPointerLeave={mouseLeave}
-        onFocus={mouseEnter}
-        onBlur={mouseLeave}
+        onPointerEnter={showPlaceholder}
+        onPointerLeave={hidePlaceholder}
+        onFocus={showPlaceholder}
+        onBlur={hidePlaceholder}
       >
-        <Label htmlFor="elem" />
-        <select
-          name="elem"
-          border-1
-          border-transparent
-          rounded
-          leading-4
-          text-base
-          hover:border-neutral-400
-          focus:border-neutral-400
-          hover:animate-pulse
-          focus:animate-pulse
-          outline-none
-          w-12
-          text-center
-          relative
-          right-2
-          onChange={(e) => setContent({ ...content, elem: e.target.value })}
-          ease-in-out
-          duration-200
-          style={{ opacity: 0 }}
-          ref={ref}
-        >
-          <option w-12 value="p">
-            p
-          </option>
-          <option value="h1">h1</option>
-          <option w-12 value="h2">
-            h2
-          </option>
-          <option w-12 value="h3">
-            h3
-          </option>
-        </select>
         <Label htmlFor="text" />
         <input
           type="text"
@@ -107,15 +80,116 @@ export default function NewPageContent({
           onChange={(e) => setContent({ ...content, text: e.target.value })}
           style={{
             width: `${
-              content && content.text?.length > 3
+              content && content.text?.length > 1
                 ? content?.text?.length + 1
-                : 4
+                : 2
             }ch`,
           }}
+          ref={ref}
           name="text"
-          placeholder="..."
           title="add line"
         />
+        {content && content.text === "/" ? (
+          <Select.Root open={content.text === "/"}>
+            <Select.Content>
+              <Select.Viewport
+                relative
+                bg-neutral-800
+                w-full
+                p-1
+                rounded
+                text-center
+              >
+                <Select.Group>
+                  <Select.Item
+                    p-1
+                    tabIndex={0}
+                    autoFocus={content.elem === "p"}
+                    onClick={() => {
+                      setContent({
+                        elem: "p",
+                        text: "",
+                      });
+                    }}
+                    onKeyDown={(evt) => {
+                      if (evt.key === "Enter") {
+                        setContent({
+                          elem: "p",
+                          text: "",
+                        });
+                      }
+                    }}
+                  >
+                    <Select.ItemText>p</Select.ItemText>
+                  </Select.Item>
+                  <Select.Item
+                    p-1
+                    tabIndex={0}
+                    autoFocus={content.elem === "h1"}
+                    onClick={() => {
+                      setContent({
+                        elem: "h1",
+                        text: "",
+                      });
+                    }}
+                    onKeyDown={(evt) => {
+                      if (evt.key === "Enter") {
+                        setContent({
+                          elem: "h1",
+                          text: "",
+                        });
+                      }
+                    }}
+                  >
+                    <Select.ItemText>h1</Select.ItemText>
+                  </Select.Item>
+                  <Select.Item
+                    p-1
+                    tabIndex={0}
+                    autoFocus={content.elem === "h2"}
+                    onClick={() => {
+                      setContent({
+                        elem: "h2",
+                        text: "",
+                      });
+                    }}
+                    onKeyDown={(evt) => {
+                      if (evt.key === "Enter") {
+                        setContent({
+                          elem: "h2",
+                          text: "",
+                        });
+                      }
+                    }}
+                  >
+                    <Select.ItemText>h2</Select.ItemText>
+                  </Select.Item>
+                  <Select.Item
+                    p-1
+                    tabIndex={0}
+                    autoFocus={content.elem === "h3"}
+                    onClick={() => {
+                      setContent({
+                        elem: "h3",
+                        text: "",
+                      });
+                    }}
+                    onKeyDown={(evt) => {
+                      if (evt.key === "Enter") {
+                        setContent({
+                          elem: "h3",
+                          text: "",
+                        });
+                      }
+                    }}
+                  >
+                    <Select.ItemText>h3</Select.ItemText>
+                  </Select.Item>
+                </Select.Group>
+              </Select.Viewport>
+            </Select.Content>
+          </Select.Root>
+        ) : null}
       </form>
     </>
   );

@@ -24,6 +24,12 @@ export default function Index({ folder }: { folder: Folder }) {
     setFolder: setFolderContext,
   } = React.useContext(PageContext);
 
+  React.useEffect(() => {
+    if (folder) {
+      setCurrentFolder(folder);
+    }
+  }, [folder, setCurrentFolder]);
+
   const updateMutation = trpc.folder.update.useMutation();
   const deleteMutation = trpc.folder.delete.useMutation();
 

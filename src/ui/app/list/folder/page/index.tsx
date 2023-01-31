@@ -37,6 +37,12 @@ export default function Page({
     setFolder: setFolderContext,
   } = React.useContext(PageContext);
 
+  React.useEffect(() => {
+    if (page) {
+      setPageContext(page);
+    }
+  }, [page, setPageContext]);
+
   const onSubmit = async (e) => {
     e.preventDefault();
     const updatedPage: Page = {
