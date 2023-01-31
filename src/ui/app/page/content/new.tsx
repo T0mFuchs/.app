@@ -10,10 +10,6 @@ const handleElem = (elem: string) => {
   if (elem === "h2") return "m-2 font-700 leading-6";
   if (elem === "h3") return "m-1 font-700 leading-5";
   if (elem === "p") return "p-2 leading-4";
-  // setup some logic for this
-  if (elem === "ul") return "ul leading-4";
-  if (elem === "ol") return "ol leading-4";
-  if (elem === "li") return "li leading-4";
 };
 
 export default function NewPageContent({
@@ -41,9 +37,24 @@ export default function NewPageContent({
     setContent(null);
   };
 
+  const ref = React.useRef(null);
+  const mouseEnter = (e) => {
+    ref.current.style.opacity = 1;
+  };
+  const mouseLeave = (e) => {
+    ref.current.style.opacity = 0;
+  };
+
   return (
     <>
-      <form pt-1 onSubmit={onSubmit} inline-flex>
+      <form
+        pt-1
+        onSubmit={onSubmit}
+        onPointerEnter={mouseEnter}
+        onPointerLeave={mouseLeave}
+        onFocus={mouseEnter}
+        onBlur={mouseLeave}
+      >
         <Label htmlFor="elem" />
         <select
           name="elem"
@@ -62,6 +73,10 @@ export default function NewPageContent({
           relative
           right-2
           onChange={(e) => setContent({ ...content, elem: e.target.value })}
+          ease-in-out
+          duration-200
+          style={{ opacity: 0 }}
+          ref={ref}
         >
           <option w-12 value="p">
             p
@@ -72,16 +87,6 @@ export default function NewPageContent({
           </option>
           <option w-12 value="h3">
             h3
-          </option>
-
-          <option w-12 value="ul">
-            ul
-          </option>
-          <option w-12 value="ol">
-            ol
-          </option>
-          <option w-12 value="li">
-            li
           </option>
         </select>
         <Label htmlFor="text" />

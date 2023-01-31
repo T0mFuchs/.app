@@ -12,10 +12,6 @@ const handleElem = (elem: string) => {
   if (elem === "h2") return "m-2 font-700 leading-6";
   if (elem === "h3") return "m-1 font-700 leading-5";
   if (elem === "p") return "p-2 leading-4";
-  // setup some logic for this
-  if (elem === "ul") return "ul leading-4";
-  if (elem === "ol") return "ol leading-4";
-  if (elem === "li") return "li leading-4";
 };
 
 export default function PageContent({
@@ -59,9 +55,24 @@ export default function PageContent({
     }
   };
 
+  const ref = React.useRef(null);
+  const mouseEnter = (e) => {
+    ref.current.style.opacity = 1;
+  };
+  const mouseLeave = (e) => {
+    ref.current.style.opacity = 0;
+  };
+
   return (
     <>
-      <form pt-1 onSubmit={onSubmit}>
+      <form
+        pt-1
+        onSubmit={onSubmit}
+        onPointerEnter={mouseEnter}
+        onPointerLeave={mouseLeave}
+        onFocus={mouseEnter}
+        onBlur={mouseLeave}
+      >
         <Label htmlFor="elem" />
         <select
           name="elem"
@@ -100,6 +111,8 @@ export default function PageContent({
               ],
             });
           }}
+          style={{ opacity: 0 }}
+          ref={ref}
         >
           <option w-12 value="p">
             p
@@ -110,15 +123,6 @@ export default function PageContent({
           </option>
           <option w-12 value="h3">
             h3
-          </option>
-          <option w-12 value="ul">
-            ul
-          </option>
-          <option w-12 value="ol">
-            ol
-          </option>
-          <option w-12 value="li">
-            li
           </option>
         </select>
         <Label htmlFor="text" />
@@ -168,7 +172,7 @@ export default function PageContent({
           type="text"
         />
       </form>
-      <Separator w="95%" bg-neutral h="1px" mt-1 />
+      <Separator w-full bg-neutral-800 h="1px" mb-1 mt="1.5" />
     </>
   );
 }

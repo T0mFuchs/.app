@@ -45,8 +45,10 @@ export default function Content({
     <form
       pt-1
       onSubmit={onSubmit}
-      onMouseEnter={mouseEnter}
-      onMouseLeave={mouseLeave}
+      onPointerEnter={mouseEnter}
+      onPointerLeave={mouseLeave}
+      onFocus={mouseEnter}
+      onBlur={mouseLeave}
     >
       <Label htmlFor="color" />
       <input

@@ -100,7 +100,7 @@ export default function PageModal({
       modalDiv.style.right = styles.right;
       modalDiv.style.left = null;
       modalDiv.style.cursor = "col-resize";
-      separator.style.width = "5px"; 
+      separator.style.width = "5px";
       separator.style.backgroundColor = "#1d4ed8"; // tailwindcss blue-700
       document.addEventListener("mousemove", onMouseMoveLeftResize);
       document.addEventListener("mouseup", onMouseUpLeftResize);
