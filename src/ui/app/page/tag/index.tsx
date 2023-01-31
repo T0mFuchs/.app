@@ -47,6 +47,7 @@ export default function PageTag({
     }
   };
 
+  if (!tag) return null;
   return (
     <form pt-1 onSubmit={onSubmit}>
       <Label htmlFor="color" />

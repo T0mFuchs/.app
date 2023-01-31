@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from "react";
 import * as Select from "@radix-ui/react-select";
 import { Label } from "@radix-ui/react-label";
@@ -65,10 +64,11 @@ export default function PageContent({
     ref.current.style.width = `${
       pageContext && pageContext.content[index]?.text.length > 1
         ? pageContext.content[index]?.text.length + 1
-        : 2
+        : content.text.length + 1
     }ch`;
   };
 
+  if (!content) return null;
   return (
     <>
       <form
@@ -122,7 +122,7 @@ export default function PageContent({
             width: `${
               pageContext && pageContext.content[index]?.text.length > 1
                 ? pageContext.content[index]?.text.length + 1
-                : 2
+                : content.text.length + 1
             }ch`,
           }}
           ref={ref}
